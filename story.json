@@ -1,0 +1,47 @@
+{
+  "start_date": "2024-01-15",
+  "start_location": "家",
+  "initial_money": 114.51,
+  "initial_time": "2024-01-15T08:00:00", 
+  "scenes": [
+      {
+          "id": "scene1",
+          "description": "你是一名大一学生，刚放假回到家里。你在网上看到有关旅行的信息，感到非常向往。",
+          "location": "家",
+          "options": [
+              {
+                  "text": "查看旅行信息",
+                  "result":  {
+                    "scene": "scene3",
+                    "money_change": 0, 
+                    "location": "家",
+                    "time_change": 24
+                }
+              },
+              {
+                  "text": "决定去打工",
+                  "result": {
+                      "scene": "scene3",
+                      "money_change": 0, 
+                      "location": "咖啡店",
+                      "time_change": 1 
+                  }
+              }
+          ]
+      },
+      {
+          "id": "scene3",
+          "description": "你找到了一份兼职工作，开始努力工作，为旅行计划攒钱。",
+          "options": [
+              {
+                  "text": "继续工作",
+                  "result": {
+                      "text": "你继续工作，攒够了旅行的费用。",
+                      "money_change": 200 ,
+                      "time_change": 1 
+                  }
+              }
+          ]
+      }
+  ]
+}
