@@ -27,7 +27,6 @@ class DataUtils:
         return DataUtils._instance
     
     def create_connection(self):
-        """创建一个数据库连接到SQLite数据库"""
         conn = None
         try:
             conn = sqlite3.connect(self.db_file)
@@ -37,7 +36,6 @@ class DataUtils:
         return conn
 
     def create_table(self):
-        """创建数据表"""
         create_table_sql = """ CREATE TABLE IF NOT EXISTS game_data (
                                         game_time text NOT NULL,
                                         position text NOT NULL,
@@ -51,7 +49,6 @@ class DataUtils:
             print(e)
 
     def update_or_insert_game_data(self, game_time, position, money):
-        """更新或插入游戏数据到数据库"""
         cur = self.conn.cursor()
         # 检查表中是否已有数据
         cur.execute("SELECT COUNT(*) FROM game_data")
@@ -68,7 +65,6 @@ class DataUtils:
         self.conn.commit()
 
     def get_game_data(self):
-        """获取游戏数据"""
         cur = self.conn.cursor()
         cur.execute("SELECT * FROM game_data")
         rows = cur.fetchall()
@@ -79,7 +75,6 @@ class DataUtils:
         self.update_single_field("game_time", game_time)
     
     def addTime(self, days=0,hours=0,minutes=0):
-        """增加特定的时间到game_time"""
         current_time_str = self.getTime()
         if current_time_str is not None:
             # 将字符串格式的时间转换为datetime对象
@@ -124,6 +119,5 @@ class DataUtils:
         return None
 
     def closeConnection(self):
-        """关闭数据库连接"""
         if self.conn:
             self.conn.close()

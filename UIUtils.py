@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import scrolledtext
 from DataUtils import DataUtils
-import time
 import threading
 import sys
 import importlib
@@ -46,8 +45,6 @@ class UIUtils:
         self.event = threading.Event()
         self.thread = threading.Thread(target=self.runScript)
         self.thread.start()
-        # self.options_frame = tk.Frame(self.root)
-        # self.options_frame.pack(pady=5)
 
         self.root.protocol("WM_DELETE_WINDOW", self.onClosing)
     
@@ -122,24 +119,3 @@ class UIUtils:
         self.stopThread()
         self.addButton("继续",self.continueRun)
     
-
-# class InteractivePanel(tk.Tk):
-#     def __init__(self):
-#         super().__init__()
-#         self.title("交互面板")
-#         self.panel = tk.Frame(self)  # 创建一个面板
-#         self.panel.pack(expand=True, fill='both')  # 配置面板自适应窗口大小
-
-    
-
-#     def add_entry(self, placeholder_text=''):
-#         """添加输入框并返回输入框实例，以便外部访问"""
-#         entry = tk.Entry(self.panel)
-#         entry.insert(0, placeholder_text)
-#         entry.pack(side='top', expand=True, fill='x')  # 使输入框自适应宽度
-#         return entry
-
-#     def clear_panel(self):
-#         """清除面板上的所有元素"""
-#         for widget in self.panel.winfo_children():
-#             widget.destroy()
