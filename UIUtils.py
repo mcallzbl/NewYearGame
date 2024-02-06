@@ -4,6 +4,7 @@ from DataUtils import DataUtils
 import threading
 import sys
 import importlib
+import queue
 class UIUtils:
     _instance = None
 
@@ -32,7 +33,6 @@ class UIUtils:
         self.location_label = tk.Label(self.status_bar, text="当前位置: " + self.dataManager.getPosition(), bg='grey')
         self.location_label.pack(side='left', padx=10)
 
-        # 配置主窗口的grid
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         
@@ -45,6 +45,8 @@ class UIUtils:
         self.event = threading.Event()
         self.thread = threading.Thread(target=self.runScript)
         self.thread.start()
+        self.queue = queue.Queue()
+        self.root.after(100,self.process_queue)
 
         self.root.protocol("WM_DELETE_WINDOW", self.onClosing)
     
@@ -62,20 +64,36 @@ class UIUtils:
         self.money_label.config(text="￥" + str(new_money))
 
     def addStoryText(self, text:str):
-        self.story_text.insert(tk.END, text + "\n")
-        self.story_text.see(tk.END)  # 自动滚动到新增内容的位置
+        def addTextToUI(text):
+            self.story_text.insert(tk.END, text + "\n")
+            self.story_text.see(tk.END) 
+        self.queue.put(lambda:addTextToUI(text))
+    
+    def process_queue(self):
+        try:
+            task = self.queue.get_nowait()
+            task()
+            self.root.after(0, self.process_queue)
+        except Exception as e:
+            pass
+            #print(e)
+        finally:
+            self.root.after(100, self.process_queue)
 
     def showOn(self):
         self.root.mainloop()
 
     def addButton(self, button_text, on_click=None):
-        button = tk.Button(self.interactivePanel, text=button_text, command=on_click)
-        button.pack()
+        def addButtonToUI(button_text, on_click):
+            button = tk.Button(self.interactivePanel, text=button_text, command=on_click)
+            button.pack()
+        self.queue.put(lambda:addButtonToUI(button_text=button_text, on_click=on_click))
     
     def clearPanel(self):
-        """清除面板上的所有元素"""
-        for widget in self.interactivePanel.winfo_children():
-            widget.destroy()
+        def clearPanelOnUI():
+            for widget in self.interactivePanel.winfo_children():
+                widget.destroy()
+        self.queue.put(lambda:clearPanelOnUI())
 
     def load_story_module(self,story_name):
         if story_name in sys.modules:
@@ -97,6 +115,7 @@ class UIUtils:
 
     def continueRun(self):
         self.event.set()
+        self.event.clear()
 
     def addEntry(self, submit_callback,placeholder_text=''):
         self.entry = tk.Entry(self.interactivePanel)
@@ -108,7 +127,7 @@ class UIUtils:
         return self.entry.get()
     
     def stopThread(self):
-        self.event = True
+        self.event.set()
         self.thread.join()
 
     def onClosing(self):
@@ -116,6 +135,6 @@ class UIUtils:
         self.stopThread()
     
     def stopForNextStep(self):
-        self.stopThread()
+        self.waitForInput()
         self.addButton("继续",self.continueRun)
     
