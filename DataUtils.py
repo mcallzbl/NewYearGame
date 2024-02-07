@@ -1,17 +1,21 @@
+# Date 2024-2-07-12
+# version 1.0
+# by mcallzbl
 import sqlite3
 from sqlite3 import Error
 from datetime import datetime, timedelta
+import os
+
 class DataUtils:
     _instance = None
 
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            
         return cls._instance
     
     def __init__(self) :
-        self.db_file = 'pp.dat'
+        self.db_file = os.path.join(self.getRelativePath(),'pp.dat')
         try:
             with sqlite3.connect(self.db_file) as self.conn:
                 if self.conn is not None:
@@ -101,10 +105,10 @@ class DataUtils:
         cur.execute(sql, (value,))
         self.conn.commit()
 
-    def getTime(self):
+    def getTime(self)->str:
         return self.get_single_field("game_time")
 
-    def getPosition(self):
+    def getPosition(self)->str:
         return self.get_single_field("position")
 
     def getMoney(self):
@@ -121,3 +125,8 @@ class DataUtils:
     def closeConnection(self):
         if self.conn:
             self.conn.close()
+
+    def getRelativePath(self)->str:
+        script_path = os.path.abspath(__file__)
+        script_dir = os.path.dirname(script_path)
+        return script_dir

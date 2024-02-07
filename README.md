@@ -1,5 +1,8 @@
 # NewYearGame
 
+安装环境
+pip install -r requirements.txt
+
 ```python
 首先需要获取操作UI和数据的实例
 from UIUtils import UIUtils
