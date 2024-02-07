@@ -11,6 +11,8 @@ import sys,os
 import importlib
 import queue
 import pygame
+from tkinter.font import Font
+from PIL import ImageFont
 class UIUtils:
     _instance = None
 
@@ -45,7 +47,9 @@ class UIUtils:
         self.location_label.grid(row=0, column=2, padx=10)
         
         # 故事文本
-        self.story_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD)
+        ttf_font = ImageFont.truetype(os.path.join(self.dataManager.getRelativePath(),'Resource/ttf'), size=12)
+        my_font = Font(family=ttf_font.getname()[0], size=12)
+        self.story_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD,font=my_font)
         self.story_text.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
         self.story_text.config(state='disabled')
         
@@ -58,15 +62,15 @@ class UIUtils:
         self.thread = threading.Thread(target=self.runScript)
         self.thread.start()
         self.queue = queue.Queue()
-        self.root.after(100,self.process_queue)
+        self.root.after(0,self.process_queue)
 
         self.root.protocol("WM_DELETE_WINDOW", self.onClosing)
 
+        #背景音乐
         pygame.init()
         pygame.mixer.init()
         pygame.mixer.music.load(os.path.join(self.dataManager.getRelativePath(),'Resource/bgm'))
-        # 播放音乐
-        pygame.mixer.music.play(-1)  # 参数-1表示循环播放
+        pygame.mixer.music.play(-1) 
 
     
     @staticmethod
@@ -82,13 +86,15 @@ class UIUtils:
         # 假设self.money_label是金钱标签的实例变量
         self.money_label.config(text="￥" + str(new_money))
 
-    def addStoryText(self, text:str):
-        def addTextToUI(text):
+    def addStoryText(self, text:str,end = '\n',color = 'black'):
+        def addTextToUI(text,end,color):
+            print(color)
             self.story_text.config(state='normal')
-            self.story_text.insert(tk.END, text + "\n")
+            self.story_text.tag_configure(color, foreground=color)
+            self.story_text.insert(tk.END, text + end,color)
             self.story_text.see(tk.END) 
             self.story_text.config(state='disabled')
-        self.queue.put(lambda:addTextToUI(text))
+        self.queue.put(lambda:addTextToUI(text,end,color))
     
     def process_queue(self):
         try:
