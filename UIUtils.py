@@ -26,18 +26,15 @@ class UIUtils(QMainWindow):
     
     def initUI(self):
         self.setWindowTitle("旅途乐章：春节版")
-        self.resize(800, 600)  # 设置窗口大小为800x600像素
+        self.resize(800, 600)
         self.dataManager = DataUtils.getInstance()
 
-        # 创建中央小部件并设置为窗口的中央小部件
         centralWidget = QWidget()
         self.setCentralWidget(centralWidget)
 
-        # 主布局
         mainLayout = QHBoxLayout(centralWidget)
         
-        # 故事文本区域设置
-
+        # 故事文本
         fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getRelativePath(),'Resource/font1'))
         fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
         font = QFont(fontFamilies[0],20)
@@ -70,8 +67,8 @@ class UIUtils(QMainWindow):
         self.rightPanelLayout.addWidget(self.interactivePanel)
 
         # 将故事文本区域和右侧面板添加到主布局
-        mainLayout.addWidget(self.storyWidget, 7)  # 左侧故事文本区域，比例为7
-        mainLayout.addWidget(self.rightPanel, 3)   # 右侧状态和交互面板，比例为3
+        mainLayout.addWidget(self.storyWidget, 8)  # 左侧故事文本区域，比例为7
+        mainLayout.addWidget(self.rightPanel, 2)   # 右侧状态和交互面板，比例为3
 
         #背景音乐
         pygame.init()
@@ -135,7 +132,11 @@ class UIUtils(QMainWindow):
 
     def runScript(self):
         self.runStory('scene')
-        pass
+
+    def runMethod(self,method):
+        self.thread.join()
+        self.thread = threading.Thread(target=method)
+        self.thread.start()
 
     def stopThread(self):
         self.event.set()

@@ -65,6 +65,12 @@ class Controller:
         self.uiManager.add_task(lambda:self.uiManager.setPosition(newPosition))
         self.dataManager.setPosition(newPosition)
 
+    def setCurrentModule(self,module):
+        pass
+
+    def setCurrentProgress(self,progress):
+        pass
+
     def getTime(self)->str:
         return self.dataManager.getTime()
     

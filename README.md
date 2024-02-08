@@ -22,6 +22,7 @@ ctrl.getTime()
 2.设置游戏时间
 ctrl.setTime(newTime)
 参数是字符串
+需要以YYYY-MM-DD HH:MM:SS为格式，建议用addTime()来操作时间
 
 3.快进时间
 ctrl.addTime(days=0,hours=0,minutes=0)
