@@ -1,70 +1,77 @@
-# Date 2024-2-07-12
+# Date 2024-02-08
 # version 1.0
 # by mcallzbl
-import tkinter as tk 
-from tkinter import ttk
-from tkinter import scrolledtext
-from ttkthemes import ThemedTk
-from DataUtils import DataUtils
+import sys
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton,QLineEdit
+from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot
+from PyQt6.QtGui import QFont, QFontDatabase,QTextCharFormat, QColor
+from DataUtils import DataUtils  # 假设这个模块同样适用于PyQt版本
+import pygame
+import os
 import threading
-import sys,os
 import importlib
 import queue
-import pygame
-from tkinter.font import Font
-from PIL import ImageFont
-class UIUtils:
+class UIUtils(QMainWindow):
     _instance = None
 
-    def __new__(cls):
+    def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = super().__new__(cls)
+            cls._instance = super(UIUtils, cls).__new__(cls)
         return cls._instance
-    
-    def __init__(self) :
-        self.root = ThemedTk(theme='arc')
-        self.root.title("旅途乐章：春节版")
 
+    def __init__(self):
+        self.app = QApplication(sys.argv)
+        super().__init__()
+        self.initUI()
+    
+    def initUI(self):
+        self.setWindowTitle("旅途乐章：春节版")
+        self.resize(800, 600)  # 设置窗口大小为800x600像素
         self.dataManager = DataUtils.getInstance()
 
-        self.root.grid_rowconfigure(0, weight=0) 
-        self.root.grid_rowconfigure(1, weight=7) 
-        self.root.grid_rowconfigure(2, weight=3) 
+        # 创建中央小部件并设置为窗口的中央小部件
+        centralWidget = QWidget()
+        self.setCentralWidget(centralWidget)
 
-        # 状态栏
-        self.status_bar = ttk.Frame(self.root, height=25)
-        self.status_bar.grid(row=0, column=0, sticky='ew')
-        self.root.grid_columnconfigure(0, weight=1)
-
-        # 状态栏内的标签 - 使用grid而非pack
-        self.time_label = ttk.Label(self.status_bar, text=self.dataManager.getTime())
-        self.time_label.grid(row=0, column=0, padx=10)
-
-        self.money_label = ttk.Label(self.status_bar, text="￥" + str(self.dataManager.getMoney()))
-        self.money_label.grid(row=0, column=1, padx=10)
-
-        self.location_label = ttk.Label(self.status_bar, text="当前位置: " + self.dataManager.getPosition())
-        self.location_label.grid(row=0, column=2, padx=10)
+        # 主布局
+        mainLayout = QHBoxLayout(centralWidget)
         
-        # 故事文本
-        ttf_font = ImageFont.truetype(os.path.join(self.dataManager.getRelativePath(),'Resource/ttf'), size=12)
-        my_font = Font(family=ttf_font.getname()[0], size=12)
-        self.story_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD,font=my_font)
-        self.story_text.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
-        self.story_text.config(state='disabled')
+        # 故事文本区域设置
+
+        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getRelativePath(),'Resource/font1'))
+        fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
+        font = QFont(fontFamilies[0],20)
+
+        self.storyWidget = QWidget()
+        self.storyLayout = QVBoxLayout(self.storyWidget)
+        self.story_text = QTextEdit()
+        self.story_text.setFont(font)
+        self.story_text.setReadOnly(True)
+        self.storyLayout.addWidget(self.story_text)
+        
+        # 状态和交互面板容器
+        self.rightPanel = QWidget()
+        self.rightPanelLayout = QVBoxLayout(self.rightPanel)
+        
+        # 状态标签
+        self.status_bar = QWidget()
+        self.status_layout = QVBoxLayout(self.status_bar)
+        self.time_label = QLabel(self.dataManager.getTime())
+        self.money_label = QLabel("￥" + str(self.dataManager.getMoney()))
+        self.location_label = QLabel("当前位置:" + self.dataManager.getPosition())
+        self.status_layout.addWidget(self.time_label)
+        self.status_layout.addWidget(self.money_label)
+        self.status_layout.addWidget(self.location_label)
+        self.rightPanelLayout.addWidget(self.status_bar)
         
         # 交互面板
-        self.interactivePanel = ttk.Frame(self.root)
-        self.interactivePanel.grid(row=2, column=0, sticky='ew')
-        self.root.grid_rowconfigure(2, weight=1)
+        self.interactivePanel = QWidget()
+        self.interactiveLayout = QVBoxLayout(self.interactivePanel)
+        self.rightPanelLayout.addWidget(self.interactivePanel)
 
-        self.event = threading.Event()
-        self.thread = threading.Thread(target=self.runScript)
-        self.thread.start()
-        self.queue = queue.Queue()
-        self.root.after(0,self.process_queue)
-
-        self.root.protocol("WM_DELETE_WINDOW", self.onClosing)
+        # 将故事文本区域和右侧面板添加到主布局
+        mainLayout.addWidget(self.storyWidget, 7)  # 左侧故事文本区域，比例为7
+        mainLayout.addWidget(self.rightPanel, 3)   # 右侧状态和交互面板，比例为3
 
         #背景音乐
         pygame.init()
@@ -72,61 +79,53 @@ class UIUtils:
         pygame.mixer.music.load(os.path.join(self.dataManager.getRelativePath(),'Resource/bgm'))
         pygame.mixer.music.play(-1) 
 
-    
+        self.event = threading.Event()
+        self.thread = threading.Thread(target=self.runScript)
+        self.thread.start()
+        self.queue = queue.Queue()
+
+    @pyqtSlot()
+    def process_queue(self):
+        try:
+            task = self.queue.get_nowait()
+            task()
+        except Exception as e:
+            pass
+
+    def add_task(self, task):
+        self.queue.put(task)
+        QMetaObject.invokeMethod(self._instance,"process_queue", Qt.ConnectionType.QueuedConnection)
+
     @staticmethod
     def getInstance():
         if UIUtils._instance is None:
             UIUtils()
         return UIUtils._instance
-    
-    def setTime(self, new_time:str):
-        self.time_label.config(text=new_time)
 
-    def setMoney(self, new_money):
-        # 假设self.money_label是金钱标签的实例变量
-        self.money_label.config(text="￥" + str(new_money))
-
-    def addStoryText(self, text:str,end = '\n',color = 'black'):
-        def addTextToUI(text,end,color):
-            print(color)
-            self.story_text.config(state='normal')
-            self.story_text.tag_configure(color, foreground=color)
-            self.story_text.insert(tk.END, text + end,color)
-            self.story_text.see(tk.END) 
-            self.story_text.config(state='disabled')
-        self.queue.put(lambda:addTextToUI(text,end,color))
-    
-    def process_queue(self):
-        try:
-            task = self.queue.get_nowait()
-            task()
-            self.root.after(0, self.process_queue)
-        except Exception as e:
-            pass
-            #print(e)
-        finally:
-            self.root.after(100, self.process_queue)
-
-    def showOn(self):
-        self.root.mainloop()
+    def addStoryText(self, text, end='\n', color='black'):
+        cursor = self.story_text.textCursor()
+        format = QTextCharFormat()
+        format.setForeground(QColor(color))
+        cursor.insertText(text+end, format)
+        self.story_text.ensureCursorVisible()
 
     def addButton(self, button_text, on_click=None):
-        def addButtonToUI(button_text, on_click):
-            button = ttk.Button(self.interactivePanel, text=button_text, command=on_click)
-            button.pack()
-        self.queue.put(lambda:addButtonToUI(button_text=button_text, on_click=on_click))
-    
-    def clearPanel(self):
-        def clearPanelOnUI():
-            for widget in self.interactivePanel.winfo_children():
-                widget.destroy()
-        self.queue.put(lambda:clearPanelOnUI())
+        button = QPushButton(button_text, self.interactivePanel)
+        if on_click:
+            button.clicked.connect(on_click)
+        self.interactiveLayout.addWidget(button)
+
+    def addEntry(self, submit_callback, placeholder_text=''):
+        self.entry = QLineEdit(self.interactivePanel)
+        self.entry.setPlaceholderText(placeholder_text)
+        self.interactiveLayout.addWidget(self.entry)
+        submitButton = QPushButton("发送", self.interactivePanel)
+        submitButton.clicked.connect(lambda: submit_callback(self.entry.text()))
+        self.interactiveLayout.addWidget(submitButton)
 
     def load_story_module(self,story_name):
         if story_name in sys.modules:
-            # 如果模块已加载，先卸载它
             del sys.modules[story_name]
-        # 动态加载指定的剧情脚本模块
         module = importlib.import_module(story_name)
         return module
 
@@ -136,7 +135,32 @@ class UIUtils:
 
     def runScript(self):
         self.runStory('scene')
-    
+        pass
+
+    def stopThread(self):
+        self.event.set()
+        self.thread.join()
+
+    def setTime(self,newTime:str):
+        self.time_label.setText(newTime)
+
+    def setMoney(self,newMoney):
+        self.money_label.setText("￥" + str(newMoney))
+
+    def setPosition(self,newPosition:str):
+        self.location_label.setText('当前位置:'+newPosition)
+
+    def closeEvent(self, event):
+        pygame.mixer.music.stop()
+        pygame.quit()
+        self.stopThread()
+        self.close()
+        event.accept()
+
+    def showOn(self):
+        self.show()
+        sys.exit(self.app.exec())
+
     def waitForInput(self):
         self.event.wait()
 
@@ -144,26 +168,8 @@ class UIUtils:
         self.event.set()
         self.event.clear()
 
-    def addEntry(self, submit_callback,placeholder_text=''):
-        self.entry = ttk.Entry(self.interactivePanel)
-        self.entry.insert(0, placeholder_text)
-        self.entry.pack(side='top', expand=True, fill='x')  # 使输入框自适应宽度
-        self.addButton('发送',submit_callback)
-    
-    def getUserInput(self)->str:
-        return self.entry.get()
-    
-    def stopThread(self):
-        self.event.set()
-        self.thread.join()
-
-    def onClosing(self):
-        self.root.destroy()
-        self.stopThread()
-        pygame.mixer.music.stop()
-        pygame.quit()
-    
-    def stopForNextStep(self):
-        self.waitForInput()
-        self.addButton("继续",self.continueRun)
-    
+    def clearInteractivePanel(self):
+        for i in reversed(range(self.interactiveLayout.count())):
+            widget = self.interactiveLayout.itemAt(i).widget()
+            if widget is not None: 
+                widget.deleteLater()

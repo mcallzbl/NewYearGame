@@ -1,4 +1,4 @@
-# Date 2024-2-07-12
+# Date 2024-02-07
 # version 1.0
 # by mcallzbl
 from UIUtils import UIUtils
@@ -8,4 +8,3 @@ if __name__ == "__main__":
     data = DataUtils.getInstance()
     ui = UIUtils.getInstance()
     ui.showOn()
-    data.closeConnection()

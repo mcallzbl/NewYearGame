@@ -1,9 +1,8 @@
-# Date 2024-2-07-12
+# Date 2024-02-07
 # version 1.0
 # by mcallzbl
 import sqlite3
 from sqlite3 import Error
-from datetime import datetime, timedelta
 import os
 
 class DataUtils:
@@ -15,14 +14,9 @@ class DataUtils:
         return cls._instance
     
     def __init__(self) :
-        self.db_file = os.path.join(self.getRelativePath(),'pp.dat')
-        try:
-            with sqlite3.connect(self.db_file) as self.conn:
-                if self.conn is not None:
-                    self.create_table()
-                pass
-        except sqlite3.Error as e:
-            print(f"数据库错误: {e}")
+        self.conn = None
+        self.create_connection()
+        self.closeConnection()
     
     @staticmethod
     def getInstance():
@@ -31,13 +25,11 @@ class DataUtils:
         return DataUtils._instance
     
     def create_connection(self):
-        conn = None
-        try:
-            conn = sqlite3.connect(self.db_file)
-            return conn
-        except Error as e:
-            print(e)
-        return conn
+        self.db_file = os.path.join(self.getRelativePath(),'pp.dat')
+        file_exists = os.path.isfile(self.db_file)
+        self.conn = sqlite3.connect(self.db_file)
+        if not file_exists:
+            self.create_table()
 
     def create_table(self):
         create_table_sql = """ CREATE TABLE IF NOT EXISTS game_data (
@@ -53,6 +45,7 @@ class DataUtils:
             print(e)
 
     def update_or_insert_game_data(self, game_time, position, money):
+        self.create_connection()
         cur = self.conn.cursor()
         # 检查表中是否已有数据
         cur.execute("SELECT COUNT(*) FROM game_data")
@@ -67,28 +60,19 @@ class DataUtils:
                       SET game_time=?, position=?, money=? '''
             cur.execute(sql, (game_time, position, money))
         self.conn.commit()
+        self.closeConnection()
 
     def get_game_data(self):
+        self.create_connection()
         cur = self.conn.cursor()
         cur.execute("SELECT * FROM game_data")
         rows = cur.fetchall()
         for row in rows:
             print(row)
+        self.closeConnection()
 
     def setGameTime(self, game_time):
         self.update_single_field("game_time", game_time)
-    
-    def addTime(self, days=0,hours=0,minutes=0):
-        current_time_str = self.getTime()
-        if current_time_str is not None:
-            # 将字符串格式的时间转换为datetime对象
-            current_time = datetime.strptime(current_time_str, "%Y-%m-%d %H:%M")
-            # 计算新的时间
-            new_time = current_time + timedelta(days=days,hours=hours,minutes=minutes)
-            # 更新游戏时间
-            self.set_game_time(new_time.strftime("%Y-%m-%d %H:%M"))
-        else:
-            print("当前没有可用的游戏时间来增加。")
 
     def setPosition(self, position:str):
         self.update_single_field("position", position)
@@ -98,12 +82,13 @@ class DataUtils:
 
     # General method to update a single field
     def update_single_field(self, field, value):
-        cur = self.conn.cursor()
-        sql = f''' UPDATE game_data
-                  SET {field} = ?
-                  WHERE rowid = 1 '''
-        cur.execute(sql, (value,))
-        self.conn.commit()
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            sql = f''' UPDATE game_data
+                    SET {field} = ?
+                    WHERE rowid = 1 '''
+            cur.execute(sql, (value,))
+            conn.commit()
 
     def getTime(self)->str:
         return self.get_single_field("game_time")
@@ -115,11 +100,12 @@ class DataUtils:
         return self.get_single_field("money")
 
     def get_single_field(self, field):
-        cur = self.conn.cursor()
-        cur.execute(f"SELECT {field} FROM game_data WHERE rowid = 1")
-        result = cur.fetchone()
-        if result:
-            return result[0]
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.execute(f"SELECT {field} FROM game_data WHERE rowid = 1")
+            result = cur.fetchone()
+            if result:
+                return result[0]
         return None
 
     def closeConnection(self):
