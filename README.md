@@ -42,6 +42,14 @@ ctrl.getMoney()
 7.设置金钱数
 ctrl.setMoney(money)
 
+8.在脚本文件第一个被调用的函数里设置当前脚本
+ctrl.setCurrentModule('scene')
+
+9.在每段剧情函数的开头保存当前函数名称
+ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+
+8和9是用来记录游戏进度的，目前还未实现
+
 
 ```
 
@@ -70,6 +78,7 @@ ctrl.addButton(button_text，on_click)
 
 5.ctrl.stopForNextStep()
 这个函数是用来等待用户按下“继续”按钮再往下执行，用于在显示多段文字之间的暂停
+如果使用纯函数方式，它目前会导致程序无响应，不要用
 
 6.添加用户输入框
 ctrl.addEntry(submit_callback,placeholder_text='')

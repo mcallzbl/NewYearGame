@@ -21,6 +21,6 @@ def plot1():
 def plot1Callback(text):
     ctrl.addStoryText(text)
     ctrl.clearPanel()
-    ctrl.stopForNextStep()
-    #ctrl.addStoryText('完了')
+    #ctrl.stopForNextStep()
+    ctrl.addStoryText('完了')
 run()
