@@ -3,6 +3,7 @@
 # by mcallzbl
 from UIUtils import UIUtils
 from DataUtils import DataUtils
+from Controller import Controller
 
 if __name__ == "__main__":
     data = DataUtils.getInstance()

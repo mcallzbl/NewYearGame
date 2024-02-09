@@ -5,7 +5,8 @@ import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton,QLineEdit
 from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot
 from PyQt6.QtGui import QFont, QFontDatabase,QTextCharFormat, QColor
-from DataUtils import DataUtils  # 假设这个模块同样适用于PyQt版本
+from DataUtils import DataUtils 
+# from Controller import Controller
 import pygame
 import os
 import threading
@@ -28,6 +29,7 @@ class UIUtils(QMainWindow):
         self.setWindowTitle("旅途乐章：春节版")
         self.resize(800, 600)
         self.dataManager = DataUtils.getInstance()
+        # self.ctrl = Controller.getInstance()
 
         centralWidget = QWidget()
         self.setCentralWidget(centralWidget)
@@ -53,12 +55,34 @@ class UIUtils(QMainWindow):
         # 状态标签
         self.status_bar = QWidget()
         self.status_layout = QVBoxLayout(self.status_bar)
-        self.time_label = QLabel(self.dataManager.getTime())
-        self.money_label = QLabel("￥" + str(self.dataManager.getMoney()))
-        self.location_label = QLabel("当前位置:" + self.dataManager.getPosition())
+        self.status_layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
+        self.time_label = QLabel()
+        self.setTime(self.dataManager.getTime())
+        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getRelativePath(),'Resource/font2'))
+        fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
+        font = QFont(fontFamilies[0],25)
+        self.time_label.setFont(font)
+        self.time_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
         self.status_layout.addWidget(self.time_label)
+
+        self.money_label = QLabel()
+        self.setMoney(self.dataManager.getMoney())
+        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getRelativePath(),'Resource/font2'))
+        fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
+        font = QFont(fontFamilies[0],15)
+        self.money_label.setFont(font)
+        self.money_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
         self.status_layout.addWidget(self.money_label)
+
+        self.location_label = QLabel()
+        self.setPosition(self.dataManager.getPosition())
+        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getRelativePath(),'Resource/font2'))
+        fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
+        font = QFont(fontFamilies[0],15)
+        self.location_label.setFont(font)
+        self.location_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
         self.status_layout.addWidget(self.location_label)
+
         self.rightPanelLayout.addWidget(self.status_bar)
         
         # 交互面板
@@ -108,17 +132,65 @@ class UIUtils(QMainWindow):
 
     def addButton(self, button_text, on_click=None):
         button = QPushButton(button_text, self.interactivePanel)
+        button.setStyleSheet("""
+            QPushButton {
+                background-color: #4CAF50; 
+                color: white; 
+                border-style: solid;
+                border-width: 2px;
+                min-height: 40px;
+                border-radius: 10px; 
+                border-color: #4CAF50;
+                padding: 6px; 
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
+        
         if on_click:
             button.clicked.connect(on_click)
         self.interactiveLayout.addWidget(button)
 
     def addEntry(self, submit_callback, placeholder_text=''):
-        self.entry = QLineEdit(self.interactivePanel)
-        self.entry.setPlaceholderText(placeholder_text)
-        self.interactiveLayout.addWidget(self.entry)
+        container = QWidget()
+        layout = QHBoxLayout()
+
+        entry = QTextEdit(self.interactivePanel)
+        entry.setPlaceholderText(placeholder_text)
+        entry.setStyleSheet("""
+            QTextEdit {
+                border: 2px solid #a9a9a9;
+                border-radius: 10px;
+                min-height : 30px;
+                max-height : 30px;
+                padding: 5px; 
+            }
+        """)
+
+        layout.addWidget(entry)
+       # self.interactiveLayout.addWidget(entry)
         submitButton = QPushButton("发送", self.interactivePanel)
-        submitButton.clicked.connect(lambda: submit_callback(self.entry.text()))
-        self.interactiveLayout.addWidget(submitButton)
+        submitButton.clicked.connect(lambda: submit_callback(entry.toPlainText()))
+        submitButton.setStyleSheet("""
+            QPushButton {
+                background-color: #4CAF50; 
+                color: white; 
+                min-height: 30px;
+                border-style: solid;
+                border-width: 2px;
+                border-radius: 10px; 
+                border-color: #4CAF50;
+                padding: 6px; 
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
+        layout.addWidget(submitButton)
+        container.setLayout(layout)
+        layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        self.interactiveLayout.addWidget(container)
 
     def load_story_module(self,story_name):
         if story_name in sys.modules:
@@ -143,10 +215,10 @@ class UIUtils(QMainWindow):
         self.thread.join()
 
     def setTime(self,newTime:str):
-        self.time_label.setText(newTime)
+        self.time_label.setText(newTime[5:])
 
     def setMoney(self,newMoney):
-        self.money_label.setText("￥" + str(newMoney))
+        self.money_label.setText("<span style = 'font-size:20pt;'>￥</span> " + str(newMoney))
 
     def setPosition(self,newPosition:str):
         self.location_label.setText('当前位置:'+newPosition)
