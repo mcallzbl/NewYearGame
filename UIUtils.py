@@ -4,7 +4,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton,QLineEdit
 from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot
-from PyQt6.QtGui import QFont, QFontDatabase,QTextCharFormat, QColor
+from PyQt6.QtGui import QFont, QFontDatabase,QTextCharFormat, QColor,QIcon
 from DataUtils import DataUtils 
 # from Controller import Controller
 import pygame
@@ -29,6 +29,7 @@ class UIUtils(QMainWindow):
         self.setWindowTitle("旅途乐章：春节版")
         self.resize(800, 600)
         self.dataManager = DataUtils.getInstance()
+        self.setWindowIcon(QIcon(os.path.join(self.dataManager.getRelativePath(),'Resource/icon')))
         # self.ctrl = Controller.getInstance()
 
         centralWidget = QWidget()
