@@ -38,7 +38,7 @@ class Controller:
             print("当前没有可用的游戏时间来增加。")
 
     def waitForInput(self):
-        self.uiManager.waitForInput()
+        self.uiManager.add_task(lambda: self.uiManager.waitForInput())
 
     def continueRun(self):
         self.uiManager.continueRun()
@@ -50,8 +50,11 @@ class Controller:
         self.uiManager.add_task(lambda:self.uiManager.addEntry(submit_callback,placeholder_text))
 
     def stopForNextStep(self):
-        self.addButton("继续",lambda:self.uiManager.continueRun())
+        self.addButton("继续",lambda:(self.uiManager.setImmediateOutput(),self.uiManager.clearInteractivePanel(),self.continueRun()))
         self.waitForInput()
+
+    def setImmediateOutput(self):
+        self.uiManager.setImmediateOutput()
 
     def setTime(self,newTime):
         self.uiManager.add_task(lambda:self.uiManager.setTime(newTime))

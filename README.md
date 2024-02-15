@@ -12,6 +12,9 @@ from Controller import Controller
 ctrl = Controller.getInstance()
 ```
 
+注意事项:
+现在剧情脚本里不需要手动调用run()函数
+在显示文本的同时右侧会显示按钮，这时点击按钮会造成进度不协调，比如在左侧正在输出的文本中插入下一段文字，目前最好的解决办法是在响应事件中加入立即输出
 操作数据
 
 ```python
@@ -89,5 +92,8 @@ ctrl.addEntry(submit_callback,placeholder_text='')
 7.清除输入面板上的一切
 ctrl.clearPanel()
 交互面板是显示按钮或输入框的地方，每次获取过用户输入之后，都应该使用它来把按钮之类的东西清除掉
+
+8.立即将该段文本输出完毕
+ctrl.setImmediateOutput()
 ```
 

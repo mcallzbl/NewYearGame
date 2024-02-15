@@ -47,15 +47,12 @@ class DataUtils:
     def update_or_insert_game_data(self, game_time, position, money):
         self.create_connection()
         cur = self.conn.cursor()
-        # 检查表中是否已有数据
         cur.execute("SELECT COUNT(*) FROM game_data")
         if cur.fetchone()[0] == 0:
-            # 如果没有数据，则插入
             sql = ''' INSERT INTO game_data(game_time,position,money)
                       VALUES(?,?,?) '''
             cur.execute(sql, (game_time, position, money))
         else:
-            # 如果有数据，则更新
             sql = ''' UPDATE game_data
                       SET game_time=?, position=?, money=? '''
             cur.execute(sql, (game_time, position, money))
@@ -80,7 +77,6 @@ class DataUtils:
     def setMoney(self, money):
         self.update_single_field("money", money)
 
-    # General method to update a single field
     def update_single_field(self, field, value):
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()

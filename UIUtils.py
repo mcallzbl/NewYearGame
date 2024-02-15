@@ -2,8 +2,9 @@
 # version 1.0
 # by mcallzbl
 import sys
+import time
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton,QLineEdit
-from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot
+from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot,QTimer
 from PyQt6.QtGui import QFont, QFontDatabase,QTextCharFormat, QColor,QIcon
 from DataUtils import DataUtils 
 # from Controller import Controller
@@ -14,6 +15,7 @@ import importlib
 import queue
 class UIUtils(QMainWindow):
     _instance = None
+
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
@@ -91,9 +93,8 @@ class UIUtils(QMainWindow):
         self.interactiveLayout = QVBoxLayout(self.interactivePanel)
         self.rightPanelLayout.addWidget(self.interactivePanel)
 
-        # 将故事文本区域和右侧面板添加到主布局
-        mainLayout.addWidget(self.storyWidget, 8)  # 左侧故事文本区域，比例为7
-        mainLayout.addWidget(self.rightPanel, 2)   # 右侧状态和交互面板，比例为3
+        mainLayout.addWidget(self.storyWidget, 8)
+        mainLayout.addWidget(self.rightPanel, 2)
 
         #背景音乐
         pygame.init()
@@ -101,22 +102,38 @@ class UIUtils(QMainWindow):
         pygame.mixer.music.load(os.path.join(self.dataManager.getRelativePath(),'Resource/bgm'))
         pygame.mixer.music.play(-1) 
 
-        self.event = threading.Event()
-        self.thread = threading.Thread(target=self.runScript)
-        self.thread.start()
+        
         self.queue = queue.Queue()
+        self.isPaused = False
+        self.immediate_output = False
+        self.runScript()
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.processQueue)
+        self.timer.start(50)
 
     @pyqtSlot()
     def process_queue(self):
         try:
-            task = self.queue.get_nowait()
-            task()
+            if not self.isPaused:
+                task = self.queue.get_nowait()
+                task()
         except Exception as e:
             pass
 
-    def add_task(self, task):
-        self.queue.put(task)
+    def processQueue(self):
         QMetaObject.invokeMethod(self._instance,"process_queue", Qt.ConnectionType.QueuedConnection)
+
+    def add_task(self, task):
+        
+        self.queue.put(task)
+        #QMetaObject.invokeMethod(self._instance,"process_queue", Qt.ConnectionType.QueuedConnection)
+
+    def setImmediateOutput(self):
+        self.immediate_output = True
+    
+    def offImmediateOutput(self):
+        self.immediate_output = False
 
     @staticmethod
     def getInstance():
@@ -128,7 +145,19 @@ class UIUtils(QMainWindow):
         cursor = self.story_text.textCursor()
         format = QTextCharFormat()
         format.setForeground(QColor(color))
-        cursor.insertText(text+end, format)
+        for char in text:
+            if not self.immediate_output:
+                cursor.insertText(char, format)
+                self.story_text.ensureCursorVisible()
+                QApplication.processEvents() 
+                time.sleep(0.1)
+            else:
+                cursor.insertText(text[cursor.position():], format)
+                self.story_text.ensureCursorVisible()
+                break
+        cursor.insertText(end, format)
+        if text[-1] == '\n' or end == '\n':
+            self.offImmediateOutput()
         self.story_text.ensureCursorVisible()
 
     def addButton(self, button_text, on_click=None):
@@ -150,7 +179,7 @@ class UIUtils(QMainWindow):
         """)
         
         if on_click:
-            button.clicked.connect(on_click)
+            button.clicked.connect(lambda:self.runMethod(on_click))
         self.interactiveLayout.addWidget(button)
 
     def addEntry(self, submit_callback, placeholder_text=''):
@@ -170,9 +199,8 @@ class UIUtils(QMainWindow):
         """)
 
         layout.addWidget(entry)
-       # self.interactiveLayout.addWidget(entry)
         submitButton = QPushButton("发送", self.interactivePanel)
-        submitButton.clicked.connect(lambda: submit_callback(entry.toPlainText()))
+        submitButton.clicked.connect(lambda: self.runMethod(lambda: submit_callback(entry.toPlainText())))
         submitButton.setStyleSheet("""
             QPushButton {
                 background-color: #4CAF50; 
@@ -201,18 +229,18 @@ class UIUtils(QMainWindow):
 
     def runStory(self,story_name):
         story_module = self.load_story_module(story_name)
-        #story_module.run_story() 
+        self.thread = threading.Thread(target=getattr(story_module,'run'))
+        self.thread.start()
 
     def runScript(self):
         self.runStory('scene')
 
     def runMethod(self,method):
         self.thread.join()
-        self.thread = threading.Thread(target=method)
+        self.thread =   threading.Thread(target=method)
         self.thread.start()
 
     def stopThread(self):
-        self.event.set()
         self.thread.join()
 
     def setTime(self,newTime:str):
@@ -236,14 +264,16 @@ class UIUtils(QMainWindow):
         sys.exit(self.app.exec())
 
     def waitForInput(self):
-        self.event.wait()
+        self.isPaused = True    
+        # self.event.wait()
 
     def continueRun(self):
-        self.event.set()
-        self.event.clear()
+        self.isPaused = False
+       # QMetaObject.invokeMethod(self, "process_queue", Qt.ConnectionType.QueuedConnection)
 
     def clearInteractivePanel(self):
         for i in reversed(range(self.interactiveLayout.count())):
             widget = self.interactiveLayout.itemAt(i).widget()
             if widget is not None: 
                 widget.deleteLater()
+                
