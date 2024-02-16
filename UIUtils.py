@@ -1,6 +1,7 @@
 # Date 2024-02-08
 # version 1.0
 # by mcallzbl
+import re
 import sys
 import time
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton,QLineEdit
@@ -106,28 +107,29 @@ class UIUtils(QMainWindow):
         self.queue = queue.Queue()
         self.isPaused = False
         self.immediate_output = False
+        self.running = True
+
         self.runScript()
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.processQueue)
-        self.timer.start(50)
+        self.timer.start(10)
 
     @pyqtSlot()
     def process_queue(self):
-        try:
-            if not self.isPaused:
+        while not self.isPaused and not self.queue.empty():
+            try:
                 task = self.queue.get_nowait()
                 task()
-        except Exception as e:
-            pass
+            except Exception as e:
+                pass
 
     def processQueue(self):
         QMetaObject.invokeMethod(self._instance,"process_queue", Qt.ConnectionType.QueuedConnection)
 
     def add_task(self, task):
-        
         self.queue.put(task)
-        #QMetaObject.invokeMethod(self._instance,"process_queue", Qt.ConnectionType.QueuedConnection)
+        self.processQueue()
 
     def setImmediateOutput(self):
         self.immediate_output = True
@@ -143,22 +145,56 @@ class UIUtils(QMainWindow):
 
     def addStoryText(self, text, end='\n', color='black'):
         cursor = self.story_text.textCursor()
-        format = QTextCharFormat()
-        format.setForeground(QColor(color))
+        default_format = QTextCharFormat()
+        default_format.setForeground(QColor(color))
+        color_pattern = re.compile(r'#([A-Fa-f0-9]{6})')
+
+        buffer = '' 
+        format = default_format 
+
+        self.skipText() 
+        text_position = 0
         for char in text:
-            if not self.immediate_output:
-                cursor.insertText(char, format)
-                self.story_text.ensureCursorVisible()
-                QApplication.processEvents() 
-                time.sleep(0.1)
-            else:
-                cursor.insertText(text[cursor.position():], format)
-                self.story_text.ensureCursorVisible()
+            if not self.running:
                 break
+            # if self.immediate_output:
+            #     cursor.insertText(text[text_position:], format)
+            #     self.story_text.ensureCursorVisible()
+            #     self.clearInteractivePanel()
+            #     break
+            if char == '#' and not buffer:
+                buffer = '#' 
+            elif buffer:
+                buffer += char  
+                if len(buffer) == 7: 
+                    match = color_pattern.match(buffer)
+                    if match:
+                        color_code = match.group(0)
+                        red = int(color_code[1:3], 16)
+                        green = int(color_code[3:5], 16)
+                        blue = int(color_code[5:], 16)
+                        format = QTextCharFormat()  
+                        format.setForeground(QColor(red, green, blue))
+                        buffer = '' 
+                    else:
+                        for buffered_char in buffer[:-1]: 
+                            cursor.insertText(buffered_char, default_format)
+                        char = buffer[-1] 
+                        buffer = char 
+            else:
+                cursor.insertText(char, format)  
+                self.story_text.ensureCursorVisible()
+                QApplication.processEvents()
+                if not self.immediate_output:
+                    time.sleep(0.1)
+            text_position += 1
+        if buffer:
+            cursor.insertText(buffer, default_format)
         cursor.insertText(end, format)
-        if text[-1] == '\n' or end == '\n':
-            self.offImmediateOutput()
+        self.offImmediateOutput()
         self.story_text.ensureCursorVisible()
+        self.clearInteractivePanel()
+        self.continueRun()
 
     def addButton(self, button_text, on_click=None):
         button = QPushButton(button_text, self.interactivePanel)
@@ -237,8 +273,12 @@ class UIUtils(QMainWindow):
 
     def runMethod(self,method):
         self.thread.join()
-        self.thread =   threading.Thread(target=method)
+        self.thread = threading.Thread(target=method)
         self.thread.start()
+
+    def skipText(self):
+        self.addButton("跳过",lambda:(self.setImmediateOutput(),self.clearInteractivePanel))
+        self.waitForInput()
 
     def stopThread(self):
         self.thread.join()
@@ -258,6 +298,7 @@ class UIUtils(QMainWindow):
         self.stopThread()
         self.close()
         event.accept()
+        self.running = False
 
     def showOn(self):
         self.show()
@@ -269,11 +310,12 @@ class UIUtils(QMainWindow):
 
     def continueRun(self):
         self.isPaused = False
-       # QMetaObject.invokeMethod(self, "process_queue", Qt.ConnectionType.QueuedConnection)
+        QMetaObject.invokeMethod(self, "process_queue", Qt.ConnectionType.QueuedConnection)
 
     def clearInteractivePanel(self):
-        for i in reversed(range(self.interactiveLayout.count())):
-            widget = self.interactiveLayout.itemAt(i).widget()
+        while self.interactiveLayout.count():
+            widget = self.interactiveLayout.takeAt(0).widget()  
             if widget is not None: 
                 widget.deleteLater()
+
                 

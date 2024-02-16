@@ -44,13 +44,14 @@ class Controller:
         self.uiManager.continueRun()
 
     def clearPanel(self):
-        self.uiManager.add_task(lambda:self.uiManager.clearInteractivePanel())
+        self.uiManager.clearInteractivePanel()
+        # self.uiManager.add_task(lambda:self.uiManager.clearInteractivePanel())
 
     def addEntry(self, submit_callback=None, placeholder_text=''):
         self.uiManager.add_task(lambda:self.uiManager.addEntry(submit_callback,placeholder_text))
 
     def stopForNextStep(self):
-        self.addButton("继续",lambda:(self.uiManager.setImmediateOutput(),self.uiManager.clearInteractivePanel(),self.continueRun()))
+        self.addButton("继续",lambda:(self.uiManager.clearInteractivePanel(),self.continueRun()))
         self.waitForInput()
 
     def setImmediateOutput(self):

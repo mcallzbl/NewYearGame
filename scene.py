@@ -15,7 +15,7 @@ def getup():
     ctrl.setPosition('卧室中')
     if ctrl.getMoney() < 114514:
         ctrl.setMoney(114514.00)
-    ctrl.addStoryText('冬日的暖阳如同一位慈祥的母亲，轻轻地穿透窗帘，斑驳的光影投在你的床头，宛如一幅淡淡的油画，充满温馨之意。')
+    ctrl.addStoryText('#4CAF50冬日的暖阳如同一位慈祥的母亲，轻轻地穿透窗帘，斑驳的光影投在你的床头，宛如一幅淡淡的油画，充满温馨之意。')
     ctrl.addStoryText('你睁开沉睡的双眼，眼角的余光捕捉到了这一切，心中不禁涌出一股淡淡的满足感。你伸出双臂，大大地伸了个懒腰，身体的每一根骨头仿佛都在欢快地跳舞。你的心情也被这舒适感染，懒洋洋的快乐涌上心头。')
     ctrl.addButton("起床",lambda:(ctrl.clearPanel(),get_up_at_once()))
     ctrl.addButton("再睡一会",lambda:(ctrl.clearPanel(),continue_sleep()))
@@ -517,4 +517,3 @@ def end_message_part4():
 def end_message_part5():
     ctrl.addStoryText("温馨地，你的旅行游戏团队")
 
-run()
