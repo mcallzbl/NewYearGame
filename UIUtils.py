@@ -4,11 +4,10 @@
 import re
 import sys
 import time
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton,QLineEdit
-from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot,QTimer
-from PyQt6.QtGui import QFont, QFontDatabase,QTextCharFormat, QColor,QIcon
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton
+from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot
+from PyQt6.QtGui import QFont, QFontDatabase,QTextCharFormat, QColor,QIcon,QTextCursor
 from DataUtils import DataUtils 
-# from Controller import Controller
 import pygame
 import os
 import threading
@@ -32,7 +31,7 @@ class UIUtils(QMainWindow):
         self.setWindowTitle("旅途乐章：春节版")
         self.resize(800, 600)
         self.dataManager = DataUtils.getInstance()
-        self.setWindowIcon(QIcon(os.path.join(self.dataManager.getRelativePath(),'Resource/icon')))
+        self.setWindowIcon(QIcon(os.path.join(self.dataManager.getResourcePath(),'Resource/icon')))
         # self.ctrl = Controller.getInstance()
 
         centralWidget = QWidget()
@@ -41,7 +40,7 @@ class UIUtils(QMainWindow):
         mainLayout = QHBoxLayout(centralWidget)
         
         # 故事文本
-        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getRelativePath(),'Resource/font1'))
+        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getResourcePath(),'Resource/font1'))
         fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
         font = QFont(fontFamilies[0],20)
 
@@ -51,6 +50,7 @@ class UIUtils(QMainWindow):
         self.story_text.setFont(font)
         self.story_text.setReadOnly(True)
         self.storyLayout.addWidget(self.story_text)
+        self.story_text.verticalScrollBar().valueChanged.connect(self.loadMoreHistory)
         
         # 状态和交互面板容器
         self.rightPanel = QWidget()
@@ -62,7 +62,7 @@ class UIUtils(QMainWindow):
         self.status_layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
         self.time_label = QLabel()
         self.setTime(self.dataManager.getTime())
-        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getRelativePath(),'Resource/font2'))
+        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getResourcePath(),'Resource/font2'))
         fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
         font = QFont(fontFamilies[0],25)
         self.time_label.setFont(font)
@@ -71,7 +71,7 @@ class UIUtils(QMainWindow):
 
         self.money_label = QLabel()
         self.setMoney(self.dataManager.getMoney())
-        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getRelativePath(),'Resource/font2'))
+        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getResourcePath(),'Resource/font2'))
         fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
         font = QFont(fontFamilies[0],15)
         self.money_label.setFont(font)
@@ -80,7 +80,7 @@ class UIUtils(QMainWindow):
 
         self.location_label = QLabel()
         self.setPosition(self.dataManager.getPosition())
-        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getRelativePath(),'Resource/font2'))
+        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getResourcePath(),'Resource/font2'))
         fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
         font = QFont(fontFamilies[0],15)
         self.location_label.setFont(font)
@@ -100,19 +100,24 @@ class UIUtils(QMainWindow):
         #背景音乐
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load(os.path.join(self.dataManager.getRelativePath(),'Resource/bgm'))
+        pygame.mixer.music.load(os.path.join(self.dataManager.getResourcePath(),'Resource/bgm'))
         pygame.mixer.music.play(-1) 
         
         self.queue = queue.Queue()
         self.isPaused = False
         self.immediate_output = False
         self.running = True
-
-        self.runScript(self.dataManager.getScript(),self.dataManager.getFunction())
-
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.processQueue)
-        self.timer.start(10)
+        self.color_pattern = re.compile(r'#([A-Fa-f0-9]{6})')
+    
+    def loadInitialHistory(self):
+        while not self.story_text.verticalScrollBar().isVisible():
+            more_history = self.getMoreHistory()
+            if more_history == None:
+                break
+            else :
+                self.addStoryText(more_history,add_to_top=True)
+            if self.story_text.verticalScrollBar().maximum() > 0:
+                break 
 
     @pyqtSlot()
     def process_queue(self):
@@ -143,60 +148,144 @@ class UIUtils(QMainWindow):
         return UIUtils._instance
     
     def loadMoreHistory(self, value):
-    # 检查是否滚动到了顶部
         if value == self.story_text.verticalScrollBar().minimum():
-            # 加载更多的历史记录数据
-            #more_history = self.getMoreHistory()
-            pass
-            
+            more_history = self.getMoreHistory()
+            if more_history != None:
+                self.add_task(lambda:self.addStoryText(more_history,add_to_top=True))
 
-    def addStoryText(self, text, end='\n', color='black'):
+    def getMoreHistory(self):
+        history = self.dataManager.load_history(1)
+        self.dataManager.increase_offset(1)
+        if len(history) == 1:
+            return history[0][1]
+        else :
+            return None 
+
+    def addStoryText(self, text, end='\n', color='black', add_to_top=False):
         cursor = self.story_text.textCursor()
-        default_format = QTextCharFormat()
-        default_format.setForeground(QColor(color))
-        color_pattern = re.compile(r'#([A-Fa-f0-9]{6})')
-
-        buffer = '' 
-        format = default_format 
-
-        self.skipText() 
+        default_format = self.createCharFormat(color)
+        if add_to_top:
+            cursor.movePosition(QTextCursor.MoveOperation.Start)
+            self.setImmediateOutput()
+        else:
+            cursor.movePosition(QTextCursor.MoveOperation.End)
+            self.skipText()
+        self.story_text.setTextCursor(cursor)
+        position_before_insertion = cursor.position() if add_to_top else None
         text_position = 0
-        for char in text:
+        for char, format in self.parseText(text, default_format):
             if not self.running:
                 break
-            if char == '#' and not buffer:
-                buffer = '#' 
-            elif buffer:
-                buffer += char  
-                if len(buffer) == 7: 
-                    match = color_pattern.match(buffer)
-                    if match:
-                        color_code = match.group(0)
-                        red = int(color_code[1:3], 16)
-                        green = int(color_code[3:5], 16)
-                        blue = int(color_code[5:], 16)
-                        format = QTextCharFormat()  
-                        format.setForeground(QColor(red, green, blue))
-                        buffer = '' 
-                    else:
-                        for buffered_char in buffer[:-1]: 
-                            cursor.insertText(buffered_char, default_format)
-                        char = buffer[-1] 
-                        buffer = char 
-            else:
-                cursor.insertText(char, format)  
-                self.story_text.ensureCursorVisible()
+            cursor.insertText(char, format)
+            self.story_text.ensureCursorVisible()
+            if not self.immediate_output:
                 QApplication.processEvents()
-                if not self.immediate_output:
-                    time.sleep(0.1)
+                time.sleep(0.1)
             text_position += 1
-        if buffer:
-            cursor.insertText(buffer, default_format)
+
         cursor.insertText(end, format)
+
+        if add_to_top and position_before_insertion is not None:
+            cursor.setPosition(position_before_insertion)
+            cursor.movePosition(QTextCursor.MoveOperation.Down)
+
+        if not add_to_top:
+            self.clearInteractivePanel()
+        self.finalizeTextAddition()
+
+    def createCharFormat(self, color_code):
+        format = QTextCharFormat()
+        if color_code.startswith('#'):
+            red, green, blue = int(color_code[1:3], 16), int(color_code[3:5], 16), int(color_code[5:], 16)
+            format.setForeground(QColor(red, green, blue))
+        else:
+            format.setForeground(QColor(color_code))
+        return format
+
+    def parseText(self, text, default_format):
+        buffer = ''
+        format = default_format
+        for char in text:
+            if char == '#' and not buffer:
+                buffer = '#'
+            elif buffer:
+                buffer += char
+                if len(buffer) == 7:
+                    format = self.getCharFormatFromBuffer(buffer, default_format)
+                    buffer = ''
+                    yield ('', format)
+                elif len(buffer) > 7:
+                    yield from self.yieldBufferedText(buffer[:-1], default_format)
+                    char, buffer = buffer[-1], ''
+            else:
+                yield (char, format)
+
+        if buffer:
+            yield from self.yieldBufferedText(buffer, default_format)  
+
+    def yieldBufferedText(self, buffer, default_format):
+        for buffered_char in buffer:
+            yield (buffered_char, default_format)      
+
+    def getCharFormatFromBuffer(self, buffer, default_format):
+        match = self.color_pattern.match(buffer)
+        if match:
+            return self.createCharFormat(match.group(0))
+        else:
+            return default_format
+        
+    def finalizeTextAddition(self):
         self.offImmediateOutput()
         self.story_text.ensureCursorVisible()
-        self.clearInteractivePanel()
         self.continueRun()
+
+    # def addStoryText(self, text, end='\n', color='black'):
+    #     cursor = self.story_text.textCursor()
+    #     default_format = QTextCharFormat()
+    #     default_format.setForeground(QColor(color))
+    #     color_pattern = re.compile(r'#([A-Fa-f0-9]{6})')
+
+    #     buffer = '' 
+    #     format = default_format 
+
+    #     self.skipText() 
+    #     text_position = 0
+    #     for char in text:
+    #         if not self.running:
+    #             break
+    #         if char == '#' and not buffer:
+    #             buffer = '#' 
+    #         elif buffer:
+    #             buffer += char  
+    #             if len(buffer) == 7: 
+    #                 match = color_pattern.match(buffer)
+    #                 if match:
+    #                     color_code = match.group(0)
+    #                     red = int(color_code[1:3], 16)
+    #                     green = int(color_code[3:5], 16)
+    #                     blue = int(color_code[5:], 16)
+    #                     format = QTextCharFormat()  
+    #                     format.setForeground(QColor(red, green, blue))
+    #                     buffer = '' 
+    #                 else:
+    #                     for buffered_char in buffer[:-1]: 
+    #                         cursor.insertText(buffered_char, default_format)
+    #                     char = buffer[-1] 
+    #                     buffer = char 
+    #         else:
+    #             cursor.insertText(char, format)  
+    #             self.story_text.ensureCursorVisible()
+    #             QApplication.processEvents()
+    #             if not self.immediate_output:
+    #                 time.sleep(0.1)
+    #         text_position += 1
+    #     if buffer:
+    #         cursor.insertText(buffer, default_format)
+    #     cursor.insertText(end, format)
+    #     self.offImmediateOutput()
+    #     self.story_text.ensureCursorVisible()
+    #     self.clearInteractivePanel()
+    #     self.continueRun()
 
     def addButton(self, button_text, on_click=None):
         button = QPushButton(button_text, self.interactivePanel)
@@ -301,11 +390,12 @@ class UIUtils(QMainWindow):
 
     def showOn(self):
         self.show()
+        self.loadInitialHistory()
+        self.runScript(self.dataManager.getScript(),self.dataManager.getFunction())
         sys.exit(self.app.exec())
 
     def waitForInput(self):
         self.isPaused = True    
-        # self.event.wait()
 
     def continueRun(self):
         self.isPaused = False

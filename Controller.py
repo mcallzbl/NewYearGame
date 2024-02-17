@@ -2,6 +2,7 @@
 # version 1.0
 # by mcallzbl
 import os
+import queue
 from DataUtils import DataUtils
 from UIUtils import UIUtils
 from datetime import datetime, timedelta
@@ -16,6 +17,7 @@ class Controller:
     def __init__(self) :
         self.dataManager = DataUtils.getInstance()
         self.uiManager = UIUtils.getInstance()
+        self.message_queue = queue.Queue()
     
     @staticmethod
     def getInstance():
@@ -23,10 +25,20 @@ class Controller:
             Controller()
         return Controller._instance
     
+    def write_texts_to_database(self):
+        while not self.message_queue.empty():
+            message = self.message_queue.get()
+            self.dataManager.insert_message(message)
+            self.dataManager.increase_offset(1)
+    
+    def add_text_to_queue(self,text):
+        self.message_queue.put(text)
+    
     def addButton(self,text,on_click):
         self.uiManager.add_task(lambda:self.uiManager.addButton(text,on_click))
 
     def addStoryText(self, text, end='\n', color='black'):
+        self.add_text_to_queue(text)
         self.uiManager.add_task(lambda:self.uiManager.addStoryText(text,end,color))
 
     def addTime(self, days=0,hours=0,minutes=0):
@@ -62,6 +74,9 @@ class Controller:
         self.uiManager.add_task(lambda:self.uiManager.setTime(newTime))
         self.dataManager.setGameTime(newTime)
 
+    def addMoney(self,money):
+        self.setMoney(self.getMoney+money)
+
     def setMoney(self,newMoney):
         self.uiManager.add_task(lambda:self.uiManager.setMoney(newMoney))
         self.dataManager.setMoney(newMoney)
@@ -74,6 +89,7 @@ class Controller:
         self.dataManager.setScript(module)
 
     def setCurrentProgress(self,progress):
+        self.write_texts_to_database()
         self.dataManager.setFunction(progress)
 
     def getTime(self)->str:

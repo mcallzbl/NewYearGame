@@ -4,6 +4,7 @@
 import sqlite3
 from sqlite3 import Error
 import os
+import sys
 
 class DataUtils:
     _instance = None
@@ -17,6 +18,10 @@ class DataUtils:
         self.conn = None
         self.create_connection()
         self.closeConnection()
+        self.offset = 0
+
+    def increase_offset(self, increment:int):
+        self.offset += increment
     
     @staticmethod
     def getInstance():
@@ -25,7 +30,8 @@ class DataUtils:
         return DataUtils._instance
     
     def create_connection(self):
-        self.db_file = os.path.join(self.getRelativePath(),'pp.dat')
+        # self.db_file = os.path.join(self.getRelativePath(),'pp.dat')
+        self.db_file = 'pp.dat'
         file_exists = os.path.isfile(self.db_file)
         self.conn = sqlite3.connect(self.db_file)
         if not file_exists:
@@ -39,9 +45,15 @@ class DataUtils:
                                         script_name text NOT NULL,
                                         function_name text NOT NULL
                                     ); """
+        create_table_sql2 = '''CREATE TABLE IF NOT EXISTS messages (
+                                    id INTEGER PRIMARY KEY, 
+                                    content TEXT)
+                                '''
+
         try:
             c = self.conn.cursor()
             c.execute(create_table_sql)
+            c.execute(create_table_sql2)
             self.update_or_insert_game_data('2024-01-15 08:00','家',145.14,'scene','run')
         except Error as e:
             print(e)
@@ -60,6 +72,31 @@ class DataUtils:
             cur.execute(sql, (game_time, position, money,script_name, function_name))
         self.conn.commit()
         self.closeConnection()
+
+    def insert_message(self, content):
+        self.create_connection()
+        cur = self.conn.cursor()
+        # cur.execute("SELECT COUNT(*) FROM messages")
+        # if cur.fetchone()[0] == 0:
+        #     sql = "INSERT INTO messages (timestamp, content) VALUES (?, ?)"
+        #     cur.execute(sql, (timestamp, content))
+        # else:
+        #     sql = ''' UPDATE messages
+        #               SET game_time=?, position=?, money=?, script_name=?, function_name=? '''
+        #     cur.execute(sql, (game_time, position, money,script_name, function_name))
+
+        cur.execute("INSERT INTO messages (content) VALUES (?)", (content,))
+        self.conn.commit()
+        self.closeConnection()
+
+    def load_history(self,limit):
+        self.create_connection()
+        cur = self.conn.cursor()
+        cur.execute("SELECT * FROM messages ORDER BY id DESC LIMIT ? OFFSET ?", (limit, self.offset,))
+        result = cur.fetchall()
+        self.conn.commit()
+        self.closeConnection()
+        return result
 
     def get_game_data(self):
         self.create_connection()
@@ -122,6 +159,14 @@ class DataUtils:
         if self.conn:
             self.conn.close()
 
+    def getResourcePath(self)->str:
+        if getattr(sys, 'frozen', False):
+            return sys._MEIPASS
+        else: 
+            script_path = os.path.abspath(__file__)
+            script_dir = os.path.dirname(script_path)
+            return script_dir
+        
     def getRelativePath(self)->str:
         script_path = os.path.abspath(__file__)
         script_dir = os.path.dirname(script_path)

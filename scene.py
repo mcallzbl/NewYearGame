@@ -1,11 +1,6 @@
 import sys
 from Controller import Controller
 ctrl = Controller.getInstance()
-ctrl.append_line_to_file('tex.txt','卧槽')
-
-ctrl.append_line_to_file('tex.txt','卧槽2')
-
-print(ctrl.read_file_to_list('tex.txt'))
 def run():
     ctrl.setCurrentModule('scene')#在脚本文件第一个被调用的函数里设置当前脚本
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)#在每段剧情函数的开头保存当前函数名称

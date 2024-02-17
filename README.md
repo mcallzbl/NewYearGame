@@ -3,8 +3,10 @@
 安装环境
 pip install -r requirements.txt
 
+双击packing.bat进行打包
 
 
+脚本编写：
 首先需要获取Controller实例
 
 ```python
@@ -12,10 +14,6 @@ from Controller import Controller
 ctrl = Controller.getInstance()
 ```
 
-注意事项:
-现在剧情脚本里不需要手动调用run()函数
-在显示文本的同时右侧会显示按钮，这时点击按钮会造成进度不协调，比如在左侧正在输出的文本中插入下一段文字，目前最好的解决办法是在响应事件中加入立即输出
-操作数据
 
 ```python
 1.获取游戏时间
@@ -51,19 +49,24 @@ ctrl.setCurrentModule('scene')
 9.在每段剧情函数的开头保存当前函数名称
 ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
 
-8和9是用来记录游戏进度的，目前还未实现
+10.增加一定量的金钱数
+ctrl.addMoney(money)
 
+11.写一行文本到指定文件中
+ctrl.append_line_to_file(filename,line_to_append)
 
+12.将指定文件中的文本读成列表
+ctrl.read_file_to_list(filename)
 ```
 
 然后就是与UI交互的接口
 
 ```python
 1.增加一段文本
-ctrl.addStoryText( text, end='\n', color='black')
+ctrl.addStoryText( text, end='\n')
 
 默认以回车结尾，如果需要拼接则可传入end参数
-color可以使用#RRGGBB码
+使用#RRGGBB码改变后面字体颜色
 
 2.暂停执行脚本以等待用户输入
 ctrl.waitForInput()
