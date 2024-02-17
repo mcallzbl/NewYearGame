@@ -35,27 +35,29 @@ class DataUtils:
         create_table_sql = """ CREATE TABLE IF NOT EXISTS game_data (
                                         game_time text NOT NULL,
                                         position text NOT NULL,
-                                        money integer NOT NULL
+                                        money integer NOT NULL,
+                                        script_name text NOT NULL,
+                                        function_name text NOT NULL
                                     ); """
         try:
             c = self.conn.cursor()
             c.execute(create_table_sql)
-            self.update_or_insert_game_data('2024-01-15 08:00','家',145.14)
+            self.update_or_insert_game_data('2024-01-15 08:00','家',145.14,'scene','run')
         except Error as e:
             print(e)
 
-    def update_or_insert_game_data(self, game_time, position, money):
+    def update_or_insert_game_data(self, game_time, position, money,script_name, function_name):
         self.create_connection()
         cur = self.conn.cursor()
         cur.execute("SELECT COUNT(*) FROM game_data")
         if cur.fetchone()[0] == 0:
-            sql = ''' INSERT INTO game_data(game_time,position,money)
-                      VALUES(?,?,?) '''
-            cur.execute(sql, (game_time, position, money))
+            sql = ''' INSERT INTO game_data(game_time,position,money, script_name, function_name)
+                      VALUES(?,?,?,?,?) '''
+            cur.execute(sql, (game_time, position, money,script_name, function_name))
         else:
             sql = ''' UPDATE game_data
-                      SET game_time=?, position=?, money=? '''
-            cur.execute(sql, (game_time, position, money))
+                      SET game_time=?, position=?, money=?, script_name=?, function_name=? '''
+            cur.execute(sql, (game_time, position, money,script_name, function_name))
         self.conn.commit()
         self.closeConnection()
 
@@ -77,6 +79,12 @@ class DataUtils:
     def setMoney(self, money):
         self.update_single_field("money", money)
 
+    def setFunction(self,function_name):
+        self.update_single_field("function_name", function_name)
+
+    def setScript(self,script_name):
+        self.update_single_field("script_name", script_name)
+
     def update_single_field(self, field, value):
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
@@ -94,6 +102,12 @@ class DataUtils:
 
     def getMoney(self):
         return self.get_single_field("money")
+    
+    def getScript(self):
+        return self.get_single_field("script_name")
+    
+    def getFunction(self):
+        return self.get_single_field("function_name")
 
     def get_single_field(self, field):
         with sqlite3.connect(self.db_file) as conn:

@@ -1,6 +1,7 @@
 # Date 2024-02-08
 # version 1.0
 # by mcallzbl
+import os
 from DataUtils import DataUtils
 from UIUtils import UIUtils
 from datetime import datetime, timedelta
@@ -70,10 +71,10 @@ class Controller:
         self.dataManager.setPosition(newPosition)
 
     def setCurrentModule(self,module):
-        pass
+        self.dataManager.setScript(module)
 
     def setCurrentProgress(self,progress):
-        pass
+        self.dataManager.setFunction(progress)
 
     def getTime(self)->str:
         return self.dataManager.getTime()
@@ -83,4 +84,17 @@ class Controller:
 
     def getPosition(self):
         return self.dataManager.getPosition()
+    
+    def append_line_to_file(self,filename,line_to_append):
+        path = os.path.join(self.dataManager.getRelativePath(),filename)
+        with open(path, 'a', encoding='utf-8') as file:
+            file.write(line_to_append + '\n')
+
+    def read_file_to_list(self,filename):
+        path = os.path.join(self.dataManager.getRelativePath(),filename)
+        with open(path, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+        return [line.strip() for line in lines]
+
+
     

@@ -102,14 +102,13 @@ class UIUtils(QMainWindow):
         pygame.mixer.init()
         pygame.mixer.music.load(os.path.join(self.dataManager.getRelativePath(),'Resource/bgm'))
         pygame.mixer.music.play(-1) 
-
         
         self.queue = queue.Queue()
         self.isPaused = False
         self.immediate_output = False
         self.running = True
 
-        self.runScript()
+        self.runScript(self.dataManager.getScript(),self.dataManager.getFunction())
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.processQueue)
@@ -142,6 +141,14 @@ class UIUtils(QMainWindow):
         if UIUtils._instance is None:
             UIUtils()
         return UIUtils._instance
+    
+    def loadMoreHistory(self, value):
+    # 检查是否滚动到了顶部
+        if value == self.story_text.verticalScrollBar().minimum():
+            # 加载更多的历史记录数据
+            #more_history = self.getMoreHistory()
+            pass
+            
 
     def addStoryText(self, text, end='\n', color='black'):
         cursor = self.story_text.textCursor()
@@ -157,11 +164,6 @@ class UIUtils(QMainWindow):
         for char in text:
             if not self.running:
                 break
-            # if self.immediate_output:
-            #     cursor.insertText(text[text_position:], format)
-            #     self.story_text.ensureCursorVisible()
-            #     self.clearInteractivePanel()
-            #     break
             if char == '#' and not buffer:
                 buffer = '#' 
             elif buffer:
@@ -263,13 +265,10 @@ class UIUtils(QMainWindow):
         module = importlib.import_module(story_name)
         return module
 
-    def runStory(self,story_name):
-        story_module = self.load_story_module(story_name)
-        self.thread = threading.Thread(target=getattr(story_module,'run'))
+    def runScript(self,script,function):
+        story_module = self.load_story_module(script)
+        self.thread = threading.Thread(target=getattr(story_module,function))
         self.thread.start()
-
-    def runScript(self):
-        self.runStory('scene')
 
     def runMethod(self,method):
         self.thread.join()
