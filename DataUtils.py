@@ -1,6 +1,9 @@
-# Date 2024-02-07
-# version 1.0
-# by mcallzbl
+# Creation Date: 2024-02-07
+# Last Modified Date: 2024-02-18
+# version: 1.0
+# Author: mcallzbl
+# Copyright: Copyright (c) Youright Team. All rights reserved.
+
 import sqlite3
 from sqlite3 import Error
 import os

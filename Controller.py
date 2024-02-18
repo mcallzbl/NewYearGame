@@ -1,6 +1,9 @@
-# Date 2024-02-08
-# version 1.0
-# by mcallzbl
+# Creation Date: 2024-02-07
+# Last Modified Date: 2024-02-18
+# version: 1.0
+# Author: mcallzbl
+# Copyright: Copyright (c) Youright Team. All rights reserved.
+
 import os
 import queue
 from DataUtils import DataUtils
