@@ -53,10 +53,10 @@ ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
 ctrl.addMoney(money)
 
 11.写一行文本到指定文件中
-ctrl.append_line_to_file(filename,line_to_append)
+ctrl.appendToFile(filename,line_to_append)
 
 12.将指定文件中的文本读成列表
-ctrl.read_file_to_list(filename)
+ctrl.readTolist(filename)
 ```
 
 然后就是与UI交互的接口

@@ -101,12 +101,12 @@ class Controller:
     def getPosition(self):
         return self.dataManager.getPosition()
     
-    def append_line_to_file(self,filename,line_to_append):
+    def appendToFile(self,filename,line_to_append):
         path = os.path.join(self.dataManager.getRelativePath(),filename)
         with open(path, 'a', encoding='utf-8') as file:
             file.write(line_to_append + '\n')
 
-    def read_file_to_list(self,filename):
+    def readTolist(self,filename):
         path = os.path.join(self.dataManager.getRelativePath(),filename)
         with open(path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
