@@ -4,6 +4,7 @@
 from UIUtils import UIUtils
 from DataUtils import DataUtils
 
+#程序由此启动
 if __name__ == "__main__":
     data = DataUtils.getInstance()
     ui = UIUtils.getInstance()

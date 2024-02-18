@@ -29,14 +29,15 @@ class DataUtils:
             DataUtils()
         return DataUtils._instance
     
+    #连接数据库
     def create_connection(self):
-        # self.db_file = os.path.join(self.getRelativePath(),'pp.dat')
-        self.db_file = 'pp.dat'
+        self.db_file = os.path.join(self.getRelativePath(),'pp.dat')
         file_exists = os.path.isfile(self.db_file)
         self.conn = sqlite3.connect(self.db_file)
         if not file_exists:
             self.create_table()
 
+    #创建表
     def create_table(self):
         create_table_sql = """ CREATE TABLE IF NOT EXISTS game_data (
                                         game_time text NOT NULL,
@@ -58,6 +59,7 @@ class DataUtils:
         except Error as e:
             print(e)
 
+    #更新或插入游戏数据
     def update_or_insert_game_data(self, game_time, position, money,script_name, function_name):
         self.create_connection()
         cur = self.conn.cursor()
@@ -73,22 +75,15 @@ class DataUtils:
         self.conn.commit()
         self.closeConnection()
 
+    #插入一条历史记录
     def insert_message(self, content):
         self.create_connection()
         cur = self.conn.cursor()
-        # cur.execute("SELECT COUNT(*) FROM messages")
-        # if cur.fetchone()[0] == 0:
-        #     sql = "INSERT INTO messages (timestamp, content) VALUES (?, ?)"
-        #     cur.execute(sql, (timestamp, content))
-        # else:
-        #     sql = ''' UPDATE messages
-        #               SET game_time=?, position=?, money=?, script_name=?, function_name=? '''
-        #     cur.execute(sql, (game_time, position, money,script_name, function_name))
-
         cur.execute("INSERT INTO messages (content) VALUES (?)", (content,))
         self.conn.commit()
         self.closeConnection()
 
+    #读取历史记录
     def load_history(self,limit):
         self.create_connection()
         cur = self.conn.cursor()
@@ -98,6 +93,7 @@ class DataUtils:
         self.closeConnection()
         return result
 
+    #获取游戏记录
     def get_game_data(self):
         self.create_connection()
         cur = self.conn.cursor()
@@ -107,21 +103,27 @@ class DataUtils:
             print(row)
         self.closeConnection()
 
+    #设置游戏时间
     def setGameTime(self, game_time):
         self.update_single_field("game_time", game_time)
 
+    #设置游戏中的位置
     def setPosition(self, position:str):
         self.update_single_field("position", position)
 
+    #设置游戏中的金钱
     def setMoney(self, money):
         self.update_single_field("money", money)
 
+    #设置当前正在执行的函数
     def setFunction(self,function_name):
         self.update_single_field("function_name", function_name)
 
+    #设置当前正在执行的脚本
     def setScript(self,script_name):
         self.update_single_field("script_name", script_name)
 
+    #更新一项数据
     def update_single_field(self, field, value):
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
@@ -131,21 +133,27 @@ class DataUtils:
             cur.execute(sql, (value,))
             conn.commit()
 
+    #获取游戏中的时间
     def getTime(self)->str:
         return self.get_single_field("game_time")
 
+    #获取游戏中的位置
     def getPosition(self)->str:
         return self.get_single_field("position")
-
+    
+    #获取游戏中的金钱
     def getMoney(self):
         return self.get_single_field("money")
     
+    #获取当前正在执行的脚本
     def getScript(self):
         return self.get_single_field("script_name")
     
+    #获取当前正在执行的函数
     def getFunction(self):
         return self.get_single_field("function_name")
 
+    #获取一项数据
     def get_single_field(self, field):
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
@@ -155,10 +163,12 @@ class DataUtils:
                 return result[0]
         return None
 
+    #关闭数据库连接
     def closeConnection(self):
         if self.conn:
             self.conn.close()
 
+    #获取资源文件目录
     def getResourcePath(self)->str:
         if getattr(sys, 'frozen', False):
             return sys._MEIPASS
@@ -166,7 +176,7 @@ class DataUtils:
             script_path = os.path.abspath(__file__)
             script_dir = os.path.dirname(script_path)
             return script_dir
-        
+    #获取相对目录    
     def getRelativePath(self)->str:
         script_path = os.path.abspath(__file__)
         script_dir = os.path.dirname(script_path)

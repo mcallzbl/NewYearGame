@@ -16,7 +16,6 @@ import queue
 class UIUtils(QMainWindow):
     _instance = None
 
-
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(UIUtils, cls).__new__(cls)
@@ -27,13 +26,12 @@ class UIUtils(QMainWindow):
         super().__init__()
         self.initUI()
     
+    #初始化UI
     def initUI(self):
         self.setWindowTitle("旅途乐章：春节版")
         self.resize(800, 600)
         self.dataManager = DataUtils.getInstance()
         self.setWindowIcon(QIcon(os.path.join(self.dataManager.getResourcePath(),'Resource/icon')))
-        # self.ctrl = Controller.getInstance()
-
         centralWidget = QWidget()
         self.setCentralWidget(centralWidget)
 
@@ -108,7 +106,13 @@ class UIUtils(QMainWindow):
         self.immediate_output = False
         self.running = True
         self.color_pattern = re.compile(r'#([A-Fa-f0-9]{6})')
+
+    #添加UI操作任务
+    def add_task(self, task):
+        self.queue.put(task)
+        self.processQueue()
     
+    #加载历史文本
     def loadInitialHistory(self):
         while not self.story_text.verticalScrollBar().isVisible():
             more_history = self.getMoreHistory()
@@ -119,6 +123,7 @@ class UIUtils(QMainWindow):
             if self.story_text.verticalScrollBar().maximum() > 0:
                 break 
 
+    #处理UI操作任务
     @pyqtSlot()
     def process_queue(self):
         while not self.isPaused and not self.queue.empty():
@@ -128,31 +133,34 @@ class UIUtils(QMainWindow):
             except Exception as e:
                 pass
 
+    #调用UI操作
     def processQueue(self):
         QMetaObject.invokeMethod(self._instance,"process_queue", Qt.ConnectionType.QueuedConnection)
 
-    def add_task(self, task):
-        self.queue.put(task)
-        self.processQueue()
-
+    
+    #设置文本立即输出
     def setImmediateOutput(self):
         self.immediate_output = True
     
+    #关闭文本立即输出
     def offImmediateOutput(self):
         self.immediate_output = False
 
+    #获取UIUtil实例
     @staticmethod
     def getInstance():
         if UIUtils._instance is None:
             UIUtils()
         return UIUtils._instance
     
+    #当滚动条滚动到最上面时，加载历史
     def loadMoreHistory(self, value):
         if value == self.story_text.verticalScrollBar().minimum():
             more_history = self.getMoreHistory()
             if more_history != None:
                 self.add_task(lambda:self.addStoryText(more_history,add_to_top=True))
 
+    #从数据库中读取历史
     def getMoreHistory(self):
         history = self.dataManager.load_history(1)
         self.dataManager.increase_offset(1)
@@ -161,6 +169,7 @@ class UIUtils(QMainWindow):
         else :
             return None 
 
+    #写入故事文本
     def addStoryText(self, text, end='\n', color='black', add_to_top=False):
         cursor = self.story_text.textCursor()
         default_format = self.createCharFormat(color)
@@ -172,6 +181,7 @@ class UIUtils(QMainWindow):
             self.skipText()
         self.story_text.setTextCursor(cursor)
         position_before_insertion = cursor.position() if add_to_top else None
+
         text_position = 0
         for char, format in self.parseText(text, default_format):
             if not self.running:
@@ -191,8 +201,11 @@ class UIUtils(QMainWindow):
 
         if not add_to_top:
             self.clearInteractivePanel()
-        self.finalizeTextAddition()
+        self.offImmediateOutput()
+        self.story_text.ensureCursorVisible()
+        self.continueRun()
 
+    #根据颜色创建Format
     def createCharFormat(self, color_code):
         format = QTextCharFormat()
         if color_code.startswith('#'):
@@ -202,6 +215,7 @@ class UIUtils(QMainWindow):
             format.setForeground(QColor(color_code))
         return format
 
+    #解析文本
     def parseText(self, text, default_format):
         buffer = ''
         format = default_format
@@ -223,70 +237,20 @@ class UIUtils(QMainWindow):
         if buffer:
             yield from self.yieldBufferedText(buffer, default_format)  
 
+
     def yieldBufferedText(self, buffer, default_format):
         for buffered_char in buffer:
             yield (buffered_char, default_format)      
 
+    #从缓冲区获取格式
     def getCharFormatFromBuffer(self, buffer, default_format):
         match = self.color_pattern.match(buffer)
         if match:
             return self.createCharFormat(match.group(0))
         else:
             return default_format
-        
-    def finalizeTextAddition(self):
-        self.offImmediateOutput()
-        self.story_text.ensureCursorVisible()
-        self.continueRun()
 
-    # def addStoryText(self, text, end='\n', color='black'):
-    #     cursor = self.story_text.textCursor()
-    #     default_format = QTextCharFormat()
-    #     default_format.setForeground(QColor(color))
-    #     color_pattern = re.compile(r'#([A-Fa-f0-9]{6})')
-
-    #     buffer = '' 
-    #     format = default_format 
-
-    #     self.skipText() 
-    #     text_position = 0
-    #     for char in text:
-    #         if not self.running:
-    #             break
-    #         if char == '#' and not buffer:
-    #             buffer = '#' 
-    #         elif buffer:
-    #             buffer += char  
-    #             if len(buffer) == 7: 
-    #                 match = color_pattern.match(buffer)
-    #                 if match:
-    #                     color_code = match.group(0)
-    #                     red = int(color_code[1:3], 16)
-    #                     green = int(color_code[3:5], 16)
-    #                     blue = int(color_code[5:], 16)
-    #                     format = QTextCharFormat()  
-    #                     format.setForeground(QColor(red, green, blue))
-    #                     buffer = '' 
-    #                 else:
-    #                     for buffered_char in buffer[:-1]: 
-    #                         cursor.insertText(buffered_char, default_format)
-    #                     char = buffer[-1] 
-    #                     buffer = char 
-    #         else:
-    #             cursor.insertText(char, format)  
-    #             self.story_text.ensureCursorVisible()
-    #             QApplication.processEvents()
-    #             if not self.immediate_output:
-    #                 time.sleep(0.1)
-    #         text_position += 1
-    #     if buffer:
-    #         cursor.insertText(buffer, default_format)
-    #     cursor.insertText(end, format)
-    #     self.offImmediateOutput()
-    #     self.story_text.ensureCursorVisible()
-    #     self.clearInteractivePanel()
-    #     self.continueRun()
-
+    #在交互区添加一个按钮
     def addButton(self, button_text, on_click=None):
         button = QPushButton(button_text, self.interactivePanel)
         button.setStyleSheet("""
@@ -309,10 +273,10 @@ class UIUtils(QMainWindow):
             button.clicked.connect(lambda:self.runMethod(on_click))
         self.interactiveLayout.addWidget(button)
 
+    #在交互区添加一个输入框
     def addEntry(self, submit_callback, placeholder_text=''):
         container = QWidget()
         layout = QHBoxLayout()
-
         entry = QTextEdit(self.interactivePanel)
         entry.setPlaceholderText(placeholder_text)
         entry.setStyleSheet("""
@@ -348,38 +312,47 @@ class UIUtils(QMainWindow):
         layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
         self.interactiveLayout.addWidget(container)
 
+    #加载故事模块
     def load_story_module(self,story_name):
         if story_name in sys.modules:
             del sys.modules[story_name]
         module = importlib.import_module(story_name)
         return module
 
+    #运行指定脚本
     def runScript(self,script,function):
         story_module = self.load_story_module(script)
         self.thread = threading.Thread(target=getattr(story_module,function))
         self.thread.start()
 
+    #运行指定函数
     def runMethod(self,method):
         self.thread.join()
         self.thread = threading.Thread(target=method)
         self.thread.start()
 
+    #添加跳过按钮
     def skipText(self):
         self.addButton("跳过",lambda:(self.setImmediateOutput(),self.clearInteractivePanel))
         self.waitForInput()
 
+    #让线程停止
     def stopThread(self):
         self.thread.join()
 
+    #设置屏幕上显示的UI
     def setTime(self,newTime:str):
         self.time_label.setText(newTime[5:])
 
+    #设置屏幕上显示的金钱数
     def setMoney(self,newMoney):
         self.money_label.setText("<span style = 'font-size:20pt;'>￥</span> " + str(newMoney))
-
+    
+    #设置屏幕上显示的位置
     def setPosition(self,newPosition:str):
         self.location_label.setText('当前位置:'+newPosition)
 
+    #窗口关闭时调用
     def closeEvent(self, event):
         pygame.mixer.music.stop()
         pygame.quit()
@@ -388,19 +361,23 @@ class UIUtils(QMainWindow):
         event.accept()
         self.running = False
 
+    #展示窗口
     def showOn(self):
         self.show()
         self.loadInitialHistory()
         self.runScript(self.dataManager.getScript(),self.dataManager.getFunction())
         sys.exit(self.app.exec())
 
+    #暂停等待输入
     def waitForInput(self):
         self.isPaused = True    
 
+    #继续执行
     def continueRun(self):
         self.isPaused = False
         QMetaObject.invokeMethod(self, "process_queue", Qt.ConnectionType.QueuedConnection)
 
+    #清除交互面板上全部组件
     def clearInteractivePanel(self):
         while self.interactiveLayout.count():
             widget = self.interactiveLayout.takeAt(0).widget()  

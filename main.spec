@@ -39,7 +39,8 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    onfile=True
+    icon='Resource/icon',
+    version='version.txt'
 )
 coll = COLLECT(
     exe,
