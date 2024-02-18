@@ -19,6 +19,8 @@ class DataUtils:
         self.create_connection()
         self.closeConnection()
         self.offset = 0
+        self.money = self.get_single_field("money")
+        self.time = self.get_single_field("game_time")
 
     def increase_offset(self, increment:int):
         self.offset += increment
@@ -106,6 +108,7 @@ class DataUtils:
     #设置游戏时间
     def setGameTime(self, game_time):
         self.update_single_field("game_time", game_time)
+        self.time = game_time
 
     #设置游戏中的位置
     def setPosition(self, position:str):
@@ -114,6 +117,7 @@ class DataUtils:
     #设置游戏中的金钱
     def setMoney(self, money):
         self.update_single_field("money", money)
+        self.money = money
 
     #设置当前正在执行的函数
     def setFunction(self,function_name):
@@ -135,7 +139,7 @@ class DataUtils:
 
     #获取游戏中的时间
     def getTime(self)->str:
-        return self.get_single_field("game_time")
+        return self.time
 
     #获取游戏中的位置
     def getPosition(self)->str:
@@ -143,7 +147,7 @@ class DataUtils:
     
     #获取游戏中的金钱
     def getMoney(self):
-        return self.get_single_field("money")
+        return self.money
     
     #获取当前正在执行的脚本
     def getScript(self):

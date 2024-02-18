@@ -13,7 +13,7 @@ pip install -r requirements.txt
 from Controller import Controller
 ctrl = Controller.getInstance()
 ```
-
+数据交互
 
 ```python
 1.获取游戏时间
