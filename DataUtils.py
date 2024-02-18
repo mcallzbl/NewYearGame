@@ -21,6 +21,10 @@ class DataUtils:
         self.offset = 0
         self.money = self.get_single_field("money")
         self.time = self.get_single_field("game_time")
+        self.music = self.get_single_field('music')
+        self.position = self.get_single_field('position')
+        self.script = self.get_single_field('script_name')
+        self.function = self.get_single_field('function_name')
 
     def increase_offset(self, increment:int):
         self.offset += increment
@@ -46,7 +50,8 @@ class DataUtils:
                                         position text NOT NULL,
                                         money integer NOT NULL,
                                         script_name text NOT NULL,
-                                        function_name text NOT NULL
+                                        function_name text NOT NULL,
+                                        music text NOT NULL
                                     ); """
         create_table_sql2 = '''CREATE TABLE IF NOT EXISTS messages (
                                     id INTEGER PRIMARY KEY, 
@@ -57,23 +62,23 @@ class DataUtils:
             c = self.conn.cursor()
             c.execute(create_table_sql)
             c.execute(create_table_sql2)
-            self.update_or_insert_game_data('2024-01-15 08:00','家',145.14,'scene','run')
+            self.update_or_insert_game_data('2024-01-15 08:00','家',145.14,'scene','run','bgm')
         except Error as e:
             print(e)
 
     #更新或插入游戏数据
-    def update_or_insert_game_data(self, game_time, position, money,script_name, function_name):
+    def update_or_insert_game_data(self, game_time, position, money,script_name, function_name,music):
         self.create_connection()
         cur = self.conn.cursor()
         cur.execute("SELECT COUNT(*) FROM game_data")
         if cur.fetchone()[0] == 0:
-            sql = ''' INSERT INTO game_data(game_time,position,money, script_name, function_name)
-                      VALUES(?,?,?,?,?) '''
-            cur.execute(sql, (game_time, position, money,script_name, function_name))
+            sql = ''' INSERT INTO game_data(game_time,position,money, script_name, function_name,music)
+                      VALUES(?,?,?,?,?,?) '''
+            cur.execute(sql, (game_time, position, money,script_name, function_name,music))
         else:
             sql = ''' UPDATE game_data
-                      SET game_time=?, position=?, money=?, script_name=?, function_name=? '''
-            cur.execute(sql, (game_time, position, money,script_name, function_name))
+                      SET game_time=?, position=?, money=?, script_name=?, function_name=?,music=? '''
+            cur.execute(sql, (game_time, position, money,script_name, function_name,music))
         self.conn.commit()
         self.closeConnection()
 
@@ -113,19 +118,27 @@ class DataUtils:
     #设置游戏中的位置
     def setPosition(self, position:str):
         self.update_single_field("position", position)
+        self.position = position
 
     #设置游戏中的金钱
     def setMoney(self, money):
         self.update_single_field("money", money)
         self.money = money
+    
+    #设置游戏bgm
+    def setMusic(self,music):
+        self.update_single_field("music", music)
+        self.music = music
 
     #设置当前正在执行的函数
     def setFunction(self,function_name):
         self.update_single_field("function_name", function_name)
+        self.function = function_name
 
     #设置当前正在执行的脚本
     def setScript(self,script_name):
         self.update_single_field("script_name", script_name)
+        self.script = script_name
 
     #更新一项数据
     def update_single_field(self, field, value):
@@ -141,9 +154,13 @@ class DataUtils:
     def getTime(self)->str:
         return self.time
 
+    #获取当前bgm
+    def getMusic(self)->str:
+        return self.music
+
     #获取游戏中的位置
     def getPosition(self)->str:
-        return self.get_single_field("position")
+        return self.position
     
     #获取游戏中的金钱
     def getMoney(self):
@@ -151,11 +168,11 @@ class DataUtils:
     
     #获取当前正在执行的脚本
     def getScript(self):
-        return self.get_single_field("script_name")
+        return self.script
     
     #获取当前正在执行的函数
     def getFunction(self):
-        return self.get_single_field("function_name")
+        return self.function
 
     #获取一项数据
     def get_single_field(self, field):
@@ -180,6 +197,7 @@ class DataUtils:
             script_path = os.path.abspath(__file__)
             script_dir = os.path.dirname(script_path)
             return script_dir
+        
     #获取相对目录    
     def getRelativePath(self)->str:
         script_path = os.path.abspath(__file__)

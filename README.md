@@ -98,5 +98,9 @@ ctrl.clearPanel()
 
 8.立即将该段文本输出完毕
 ctrl.setImmediateOutput()
+
+9.更换bgm
+ctrl.setMusic(newMusic)
+输入新bgm的文件名
 ```
 

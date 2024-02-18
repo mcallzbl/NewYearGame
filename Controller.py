@@ -86,7 +86,8 @@ class Controller:
         self.dataManager.setPosition(newPosition)
 
     def setMusic(self,newMusic):
-        pass
+        self.dataManager.setMusic(newMusic)
+        self.uiManager.add_task(lambda:self.uiManager.changeMusic(newMusic))
 
     def setCurrentModule(self,module):
         self.dataManager.setScript(module)

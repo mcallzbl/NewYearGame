@@ -98,7 +98,7 @@ class UIUtils(QMainWindow):
         #背景音乐
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load(os.path.join(self.dataManager.getResourcePath(),'Resource/bgm'))
+        pygame.mixer.music.load(os.path.join(self.dataManager.getResourcePath(),'Resource/'+self.dataManager.getMusic()))
         pygame.mixer.music.play(-1) 
         
         self.queue = queue.Queue()
@@ -136,7 +136,16 @@ class UIUtils(QMainWindow):
     #调用UI操作
     def processQueue(self):
         QMetaObject.invokeMethod(self._instance,"process_queue", Qt.ConnectionType.QueuedConnection)
-
+    
+    #更换背景音乐
+    def changeMusic(self,newMusic):
+        fadeout_duration = 500
+        pygame.mixer.music.fadeout(fadeout_duration)
+        while pygame.mixer.music.get_busy():
+            pygame.time.delay(100)
+        new_music_path = os.path.join(self.dataManager.getRelativePath(),'Resource/'+newMusic)
+        pygame.mixer.music.load(new_music_path)
+        pygame.mixer.music.play(-1)
     
     #设置文本立即输出
     def setImmediateOutput(self):

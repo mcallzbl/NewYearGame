@@ -8,6 +8,7 @@ def run():
     ctrl.addButton("进入游戏",lambda:(ctrl.clearPanel(),getup()))
    
 def getup():
+    ctrl.setMusic('bgm2')
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.setPosition('卧室中')
     if ctrl.getMoney() < 114514:
