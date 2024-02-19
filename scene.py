@@ -1,10 +1,132 @@
 import sys
+import openai
 from Controller import Controller
+from datetime import datetime
 ctrl = Controller.getInstance()
+openai.api_key = "sk-lJismDvRUX1PCmbfD6Cc6cC83e654148AdE00aB0FcFa4e5f"  # 使用你的API密钥
+openai.api_base = "http://211.159.163.132:3000/v1"  # 使用正确的API基础URL
+ctrl = Controller.getInstance()
+ctrl.setCurrentModule('scene')
+  
+global_plans = []  # 用于存储用户输入的计划项
+completed_plans = []  # 用于存储已完成的计划项
+
+def check_date():
+    current_time_str = ctrl.getTime()
+    try:
+        current_time = datetime.strptime(current_time_str, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        current_time = datetime.strptime(current_time_str, "%Y-%m-%d %H:%M")
+    
+    target_time = datetime(current_time.year, 2, 6)
+    return current_time < target_time
+def chat_with_gpt3(user_input):
+    introduction = "我是一个人工智能助手，我可以帮助你规划你的假期。请你告诉我你的假期安排，我会将你的安排拆分成多个小的事项，并逐行输出。"
+
+    conversation_history = [
+        {"role": "system", "content": introduction},
+        {"role": "user", "content": user_input},
+        {"role": "assistant", "content": "这个输入是否包含不恰当或冒犯性的内容？如果是，请回答'是'。"}
+    ]
+
+    chat_completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=conversation_history
+    )
+
+    gpt_response = chat_completion.choices[0].message["content"]
+    if "是" in gpt_response:
+        ctrl.addStoryText("检测到不合适的输入，请重新输入。")
+        ask_for_plan()
+    else:
+        # 如果输入有效，格式化并输出用户的计划
+        formatted_input = user_input.replace('，', '\n').replace(',', '\n').strip()
+        global global_plans
+        global_plans = formatted_input.split('\n')
+        ctrl.appendToFile("plan.txt", formatted_input + "\n")
+        ctrl.addStoryText("已保存")
+        create_action_buttons(global_plans)
+
+def generate_encouragement(plan):
+    prompt = f"请为以下计划项生成一段鼓励的话：\n计划项：{plan}\n鼓励的话："
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prompt,
+        max_tokens=60
+    )
+    encouragement = response.choices[0].text.strip()
+    ctrl.addStoryText(encouragement)
+    ctrl.setImmediateOutput()
+    # 检查是否所有计划都已经讨论过
+    global global_plans
+    global_plans.remove(plan)
+    if not global_plans:
+        # 如果所有计划都讨论完毕，递进到下一天
+        ctrl.addTime(days=1)
+        if check_date():
+            # 如果还没到2月6日，再次询问计划
+            ask_for_plan()
+        else:
+            # 如果已经到达2月6日，结束循环
+            ctrl.addStoryText("我们已经完成了所有的计划，现在是2月6日。")
+
+def create_action_buttons(plans):
+    ctrl.clearPanel()
+    for plan in plans:
+        if plan.strip() and plan not in completed_plans:
+            ctrl.addButton(plan, lambda plan=plan: on_button_click(plan))
+
+def on_button_click(plan):
+    generate_encouragement(plan)
+    completed_plans.append(plan)
+    update_buttons()
+
+def update_buttons():
+    ctrl.clearPanel()
+    for plan in global_plans:
+        if plan in completed_plans:
+            ctrl.addButton(plan + " - 已完成", lambda: None)
+        else:
+            ctrl.addButton(plan, lambda plan=plan: on_button_click(plan))
+    check_all_completed()
+
+def check_all_completed():
+    if all(plan in completed_plans for plan in global_plans):
+        ctrl.addTime(days=1)
+        if check_date():
+            start_new_day()
+        else:
+            ctrl.addStoryText("我们已经完成了所有的计划，现在是2月6日。")
+
+def start_new_day():
+    global completed_plans
+    completed_plans = []
+    create_action_buttons(global_plans)
+
+def ask_for_plan():
+    ctrl.clearPanel()
+    ctrl.addStoryText("请输入您的假期安排：")
+    ctrl.addEntry(submit_callback=chat_with_gpt3, placeholder_text="请在这里输入...")
+
+def plan():
+    if check_date():
+        ask_for_plan()
+    else:
+        ctrl.addStoryText("时间已经到达2月6日。")
+
+
+
+
+
+
+
+
+
 def run():
     ctrl.setCurrentModule('scene')#在脚本文件第一个被调用的函数里设置当前脚本
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)#在每段剧情函数的开头保存当前函数名称
-    ctrl.addStoryText('欢迎来到“旅行模拟器：春节特别版！')
+    ctrl.addTime(days=10,hours=0,minutes=0)
+    ctrl.addStoryText('欢迎来到#0000FF“旅行模拟器：春节特别版！#0000FF')
     ctrl.addButton("进入游戏",lambda:(ctrl.clearPanel(),getup()))
    
 def getup():
@@ -54,53 +176,90 @@ def plan_vacation():
 
 def go_to_harbin():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("爸爸说：'哈尔滨最近在东北可以说是狠狠火了一把！你在东北大学求学，也没去看看？'你说：'东北大学也不在哈尔滨啊！不过说的也是，东三省是一家，哈尔滨也不远，不如我们也去看看这座北方的“冰城”吧！'妈妈也表示赞同，立刻三步并两步地跑进卧室找冬装去了。")
-    choose_transportation() 
-
+    ctrl.addStoryText("爸爸说：'哈尔滨最近在东北可以说是狠狠火了一把！你在东北大学求学，也没去看看？'你说：'东北大学也不在哈尔滨啊！不过说的也是，东三省是一家，哈尔滨也不远，不如我们也去看看这座北方的“冰城”吧！'妈妈也表示赞同。")
+    choose_transportationforhaerbin()
 def go_to_hainan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    choose_transportation()
 
-def choose_transportation():
+    choose_transportationforhainnan()
+
+def choose_transportationforhainnan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("爸爸说：'行,那就这么定了，今年咱们也体验一把游历春节的潮流！我去看看出行方式。'")
     ctrl.addStoryText("选择出行方式")
-    ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flight()))
-    ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_train()))
-    ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train()))
+    ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flightforhainan()))
+    ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_trainforhainan()))
+    ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train2()))#1
     ctrl.addButton("自驾", lambda: (ctrl.clearPanel(), self_driving()))
 
-def slow_train():#绿皮火车
+def choose_transportationforhaerbin():
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("爸爸说：'行,那就这么定了，今年咱们也体验一把游历春节的潮流！我去看看出行方式。'")
+    ctrl.addStoryText("选择出行方式")
+    ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flightforhaerbin()))
+    ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_trainforhaerbin()))
+    ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train1()))
+   
+
+
+def choose_high_speed_trainforhaerbin():
+    ctrl.addStoryText("你说：'好的，咱们坐高铁吧，高铁快还舒适，我们还能欣赏一下沿途的风光'")
+    ctrl.addStoryText("妈妈也表示赞同，爸爸开始查看车票")
+    
+
+def slow_train2():#绿皮火车
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("妈妈说，哎呀，坐什么绿皮火车，那种车多慢啊，还不舒服，咱们直接坐飞机去吧")
-    choose_flight()
+    choose_flightforhainan()
 
-def choose_flight():#飞机
+def slow_train1():#绿皮火车
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("妈妈说，哎呀，坐什么绿皮火车，那种车多慢啊，还不舒服，咱们坐高铁吧")
+    choose_high_speed_trainforhaerbin()
+
+def choose_flightforhainan():#飞机
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你对你的爸爸说爸咱们坐飞机吧，飞机更方便更快。")
     
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), success_in_get_ticket()))
 
+def choose_flightforhaerbin():#乘坐飞机去哈尔滨
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("你对你的爸爸说爸咱们坐飞机吧，飞机更方便更快。")
+    ctrl.addStoryText("但是，妈妈却说：'反正哈尔滨离咱们也不远，不如坐火车去吧，正好能够欣赏一路上的风光'")
+    ctrl.addStoryText('你和爸爸都表示赞同')
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), success_in_get_ticketforhaerbin()))
+
 def self_driving():#自驾
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("妈妈对爸爸说：'咱家的车最近修好了吧？不如直接开过去，还能欣赏沿途美景……'妈妈还没说完，爸爸一脸苦笑地向大家展示了交管12123：他的驾驶证已经扣掉了11分，罚款也没有缴纳。妈妈叹了口气：'算了吧，还是选别的出行方式吧……'")
-    ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), take_high_speed_train()))
-    ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train()))
-    ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flight()))
+    ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_trainforhainan()))
+    ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train2()))
+    ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flightforhainan()))
 
-def choose_high_speed_train():
+def choose_high_speed_trainforhainan():
     ctrl.addStoryText("你的妈妈说：'哎，坐动车需要频繁中转啊，咱们还是坐飞机吧，省时省力'")
-    choose_flight()
+    choose_flightforhainan()
       
 def success_in_get_ticket():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你的爸爸打开了飞猪旅行，并开始查询相应的航班。过了一会儿他高兴地拍了拍手说：'好了我已经成功地抢到了三张票，时间是2月8号早上7点40从桃仙机场起飞，飞往美兰机场'。你妈妈说:'''好啊,我已经迫不及待了。'''")
+    ctrl.addStoryText("你的爸爸打开了携程旅行，并开始查询相应的航班。过了一会儿他高兴地拍了拍手说：'好了我已经成功地抢到了三张票，时间是2月8号早上7点40从桃仙机场起飞，飞往美兰机场'。你妈妈说:'''好啊,我已经迫不及待了。'''")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), plan_vacation_days()))
 
+
+def success_in_get_ticketforhaerbin():
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("你的爸爸打开了高铁12306，并开始查询相应的高铁班次。过了一会儿他高兴地拍了拍手说：'好了我已经成功地抢到了三张票，时间是2月8号早上7点40从新民北站出发，直达哈尔滨西站！'。你妈妈说:'''好啊,我已经迫不及待了。'''")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(),  night_before_departure()))
 def plan_vacation_days():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("现在是1月19日，距离旅游还有一段时间，你寻思着假期该怎么安排呢？")
-    night_before_departure()
+    ctrl.addStoryText("你点开了手机上的'智慧东大'软件.虽然他被同学们戏称为“智障东b”，但是这个软件最近有所更新，能够当一个智能记事本用")
+    plan()
+
+
+
+
 
 def night_before_departure():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
@@ -542,12 +701,9 @@ def mom_shares_experience():
 def you_share_experience():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你则回忆起在红树林中的宁静时刻：“那片红树林给我留下了深刻的印象，那里的自然美景和平静，让我感到心灵都被净化了。”")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), sibling_shares_experience()))
-
-def sibling_shares_experience():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("弟弟或妹妹兴奋地插话：“我喜欢海口骑楼老街，那些老建筑真的很酷，而且那天我们还学习了制作手工艺品，这些都是很宝贵的经历。”")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), family_discussion()))
+
+
 
 def family_discussion():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
@@ -602,3 +758,4 @@ def end_message_part5():
 
 
 
+#以下未
