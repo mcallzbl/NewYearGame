@@ -102,5 +102,9 @@ ctrl.setImmediateOutput()
 9.更换bgm
 ctrl.setMusic(newMusic)
 输入新bgm的文件名
+
+10.切换脚本
+ctrl.changeScript(newScript,newFunction)
+新脚本名称和函数名称
 ```
 

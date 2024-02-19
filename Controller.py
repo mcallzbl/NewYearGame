@@ -20,7 +20,7 @@ class Controller:
     def __init__(self) :
         self.dataManager = DataUtils.getInstance()
         self.uiManager = UIUtils.getInstance()
-        self.message_queue = queue.Queue()
+        self.messageQueue = queue.Queue()
     
     @staticmethod
     def getInstance():
@@ -29,18 +29,18 @@ class Controller:
         return Controller._instance
     
     def write_texts_to_database(self):
-        while not self.message_queue.empty():
-            message = self.message_queue.get()
+        while not self.messageQueue.empty():
+            message = self.messageQueue.get()
             self.dataManager.insert_message(message)
             self.dataManager.increase_offset(1)
     
-    def add_text_to_queue(self,text):
-        self.message_queue.put(text)
+    def add_text_to_queue(self,text:str):
+        self.messageQueue.put(text)
     
     def addButton(self,text,on_click):
         self.uiManager.add_task(lambda:self.uiManager.addButton(text,on_click))
 
-    def addStoryText(self, text, end='\n', color='black'):
+    def addStoryText(self, text:str, end='\n', color='black'):
         self.add_text_to_queue(text)
         self.uiManager.add_task(lambda:self.uiManager.addStoryText(text,end,color))
 
@@ -73,7 +73,7 @@ class Controller:
     def setImmediateOutput(self):
         self.uiManager.setImmediateOutput()
 
-    def setTime(self,newTime):
+    def setTime(self,newTime:str):
         self.uiManager.add_task(lambda:self.uiManager.setTime(newTime))
         self.dataManager.setGameTime(newTime)
 
@@ -84,18 +84,18 @@ class Controller:
         self.uiManager.add_task(lambda:self.uiManager.setMoney(newMoney))
         self.dataManager.setMoney(newMoney)
 
-    def setPosition(self,newPosition):
+    def setPosition(self,newPosition:str):
         self.uiManager.add_task(lambda:self.uiManager.setPosition(newPosition))
         self.dataManager.setPosition(newPosition)
 
-    def setMusic(self,newMusic):
+    def setMusic(self,newMusic:str):
         self.dataManager.setMusic(newMusic)
         self.uiManager.add_task(lambda:self.uiManager.changeMusic(newMusic))
 
-    def setCurrentModule(self,module):
+    def setCurrentModule(self,module:str):
         self.dataManager.setScript(module)
 
-    def setCurrentProgress(self,progress):
+    def setCurrentProgress(self,progress:str):
         self.write_texts_to_database()
         self.dataManager.setFunction(progress)
 
@@ -105,7 +105,7 @@ class Controller:
     def getMoney(self):
         return self.dataManager.getMoney()
 
-    def getPosition(self):
+    def getPosition(self)->str:
         return self.dataManager.getPosition()
     
     def appendToFile(self,filename,line_to_append):
@@ -119,5 +119,8 @@ class Controller:
             lines = file.readlines()
         return [line.strip() for line in lines]
 
-
+    def changeScript(self,newScript:str,newFunction:str):
+        self.setCurrentModule(newScript)
+        self.setCurrentProgress(newFunction)
+        self.uiManager.add_task(lambda:self.uiManager.changeScript(newScript,newFunction))
     
