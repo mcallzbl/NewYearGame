@@ -7,7 +7,7 @@
 import re
 import sys
 import time
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton,QStackedWidget
 from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot
 from PyQt6.QtGui import QFont, QFontDatabase,QTextCharFormat, QColor,QIcon,QTextCursor
 from DataUtils import DataUtils 
@@ -35,9 +35,18 @@ class UIUtils(QMainWindow):
         self.resize(800, 600)
         self.dataManager = DataUtils.getInstance()
         self.setWindowIcon(QIcon(os.path.join(self.dataManager.getResourcePath(),'Resource/icon')))
-        centralWidget = QWidget()
-        self.setCentralWidget(centralWidget)
-        self.mainLayout = QHBoxLayout(centralWidget)
+        self.stacked_widget = QStackedWidget()
+        self.setCentralWidget(self.stacked_widget)
+
+        self._initGameUI()
+        
+    def _initMainScreen(self):
+        self.mainWidget = QWidget()
+
+    def _initGameUI(self):
+        self.gameWidget = QWidget()
+        self.setCentralWidget(self.gameWidget)
+        self.mainLayout = QHBoxLayout(self.gameWidget)
         self.rightPanel = QWidget()
         self.rightPanelLayout = QVBoxLayout(self.rightPanel)
 
@@ -50,11 +59,9 @@ class UIUtils(QMainWindow):
         self.isPaused = False
         self.immediate_output = False
         self.running = True
-        self.thread = None
+        self.lock = threading.Lock()
         self.color_pattern = re.compile(r'#([A-Fa-f0-9]{6})')
-
         
-    
     #初始化故事文本
     def _initStoyText(self):
         fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getResourcePath(),'Resource/font1'))
@@ -164,6 +171,7 @@ class UIUtils(QMainWindow):
 
     #写入故事文本
     def addStoryText(self, text, end='\n', color='black', add_to_top=False):
+        # self.waitForInput()
         cursor = self.story_text.textCursor()
         default_format = self.createCharFormat(color)
         if add_to_top:
@@ -171,7 +179,7 @@ class UIUtils(QMainWindow):
             self.setImmediateOutput()
         else:
             cursor.movePosition(QTextCursor.MoveOperation.End)
-            self.skipText()
+            # self.skipText()
         self.story_text.setTextCursor(cursor)
         position_before_insertion = cursor.position() if add_to_top else None
 
@@ -192,10 +200,10 @@ class UIUtils(QMainWindow):
             cursor.setPosition(position_before_insertion)
             cursor.movePosition(QTextCursor.MoveOperation.Down)
 
-        if not add_to_top:
-            self.clearInteractivePanel()
+        # if not add_to_top:
         self.offImmediateOutput()
         self.story_text.ensureCursorVisible()
+        self.clearInteractivePanel()
         self.continueRun()
     
     #加载历史文本
@@ -328,7 +336,10 @@ class UIUtils(QMainWindow):
         """)
         
         if on_click:
+            #if not immediate:
             button.clicked.connect(lambda:self.runMethod(on_click))
+            # else :
+            #     button.clicked.connect(on_click)
         self.interactiveLayout.addWidget(button)
 
     #加载故事模块
@@ -340,7 +351,6 @@ class UIUtils(QMainWindow):
 
     #运行指定脚本
     def runScript(self,script,function):
-        print(script+function)
         story_module = self.load_story_module(script)
         self.thread = threading.Thread(target=getattr(story_module,function))
         self.thread.start()
@@ -357,10 +367,9 @@ class UIUtils(QMainWindow):
         self.thread.start()
 
     #添加跳过按钮
-    def skipText(self):
-        self.addButton("跳过",lambda:(self.setImmediateOutput(),self.clearInteractivePanel))
-        self.waitForInput()
-
+    # def skipText(self):
+    #     self.addButton("跳过",lambda:(self.clearInteractivePanel(),self.setImmediateOutput()),immediate=True)
+        
     #让线程停止
     def stopThread(self):
         self.thread.join()
@@ -407,6 +416,7 @@ class UIUtils(QMainWindow):
         while self.interactiveLayout.count():
             widget = self.interactiveLayout.takeAt(0).widget()  
             if widget is not None: 
+                widget.hide()
                 widget.deleteLater()
 
                 

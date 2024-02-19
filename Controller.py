@@ -42,7 +42,9 @@ class Controller:
 
     def addStoryText(self, text:str, end='\n', color='black'):
         self.add_text_to_queue(text)
-        self.uiManager.add_task(lambda:self.uiManager.addStoryText(text,end,color))
+        self.addButton("跳过",lambda:(self.setImmediateOutput()))
+        self.uiManager.add_task(lambda:(self.uiManager.waitForInput(),self.uiManager.addStoryText(text,end,color)))
+        self.uiManager.add_task(lambda:self.uiManager.clearInteractivePanel())
 
     def addTime(self, days=0,hours=0,minutes=0):
         current_time_str = self.getTime()
@@ -61,7 +63,7 @@ class Controller:
 
     def clearPanel(self):
         self.uiManager.clearInteractivePanel()
-        # self.uiManager.add_task(lambda:self.uiManager.clearInteractivePanel())
+        #self.uiManager.add_task(lambda:self.uiManager.clearInteractivePanel())
 
     def addEntry(self, submit_callback=None, placeholder_text=''):
         self.uiManager.add_task(lambda:self.uiManager.addEntry(submit_callback,placeholder_text))
