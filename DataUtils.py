@@ -21,13 +21,8 @@ class DataUtils:
         self.conn = None
         self.create_connection()
         self.closeConnection()
-        self.offset = 0
-        self.money = self.get_single_field("money")
-        self.time = self.get_single_field("game_time")
-        self.music = self.get_single_field('music')
-        self.position = self.get_single_field('position')
-        self.script = self.get_single_field('script_name')
-        self.function = self.get_single_field('function_name')
+        
+        self._initData()
 
     def increase_offset(self, increment:int):
         self.offset += increment
@@ -45,6 +40,26 @@ class DataUtils:
         self.conn = sqlite3.connect(self.db_file)
         if not file_exists:
             self.create_table()
+
+    def reCreateDB(self):
+        self.db_file = os.path.join(self.getRelativePath(),'pp.dat')
+        # 如果文件存在，删除它
+        if os.path.isfile(self.db_file):
+            os.remove(self.db_file)
+
+        # 然后重新创建数据库和表
+        self.conn = sqlite3.connect(self.db_file)
+        self.create_table()
+        self._initData()
+    
+    def _initData(self):
+        self.offset = 0
+        self.money = self.get_single_field("money")
+        self.time = self.get_single_field("game_time")
+        self.music = self.get_single_field('music')
+        self.position = self.get_single_field('position')
+        self.script = self.get_single_field('script_name')
+        self.function = self.get_single_field('function_name')
 
     #创建表
     def create_table(self):

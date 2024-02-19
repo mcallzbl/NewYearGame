@@ -108,15 +108,14 @@ class UIUtils(QMainWindow):
         painter.drawPixmap(x, y, scaled_pixmap)
 
     def newGame(self):
-        pass
+        self.dataManager.reCreateDB()
+        self.continueGame()
     
     def continueGame(self):
         self.stacked_widget.setCurrentIndex(1)
-       #self.loadMusic()
         self.loadStatus()
         self.loadInitialHistory()
         self.runScript(self.dataManager.getScript(),self.dataManager.getFunction())
-        
 
     def about_us(self):
         pass
@@ -284,17 +283,17 @@ class UIUtils(QMainWindow):
         submitButton.clicked.connect(lambda: self.runMethod(lambda: submit_callback(entry.toPlainText())))
         submitButton.setStyleSheet("""
             QPushButton {
-                background-color: #4CAF50; 
+                background-color: #0b192b; 
                 color: white; 
                 min-height: 30px;
                 border-style: solid;
                 border-width: 2px;
                 border-radius: 10px; 
-                border-color: #4CAF50;
+                border-color:#facba2;
                 padding: 6px; 
             }
             QPushButton:hover {
-                background-color: #45a049;
+                background-color:  #284366;
             }
         """)
         layout.addWidget(submitButton)
