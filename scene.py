@@ -12,8 +12,8 @@ def getup():
     ctrl.setPosition('卧室中')
     if ctrl.getMoney() < 114514:
         ctrl.setMoney(114514.00)
-    ctrl.addStoryText('冬日的暖阳如同一位慈祥的母亲，轻轻地穿透窗帘，斑驳的光影投在你的床头，宛如一幅淡淡的油画，充满温馨之意。')
-    ctrl.addStoryText('你睁开沉睡的双眼，眼角的余光捕捉到了这一切，心中不禁涌出一股淡淡的满足感。你伸出双臂，大大地伸了个懒腰，身体的每一根骨头仿佛都在欢快地跳舞。你的心情也被这舒适感染，懒洋洋的快乐涌上心头。')
+    ctrl.addStoryText('冬日的暖阳轻轻地穿透窗帘，斑驳的光影投在你的床头，充满温馨之意。')
+    ctrl.addStoryText('你睁开沉睡的双眼，眼角的余光捕捉到了这一切，心中满是满足和慵懒。你伸出双臂，大大地伸了个懒腰。')
     ctrl.addButton("起床",lambda:(ctrl.clearPanel(),get_up_at_once()))
     ctrl.addButton("再睡一会",lambda:(ctrl.clearPanel(),continue_sleep()))
 
@@ -28,7 +28,7 @@ def continue_sleep():
 def get_up_at_once():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你掀开被子坐了起来，等自己清醒了几分后起身下床，穿好衣服后走出了你的卧室。")
-    ctrl.addStoryText("今天是周末，你的爸爸妈妈都在家休息。你的爸爸妈妈现在正坐在客厅的沙发里，你的妈妈在看一本都市小说，而你的爸爸则在刷着手机，浏览着某些网页。")
+    ctrl.addStoryText("今天是周末，你的爸爸妈妈都在家休息。你的爸爸妈妈现在正坐在客厅的沙发上，你的妈妈在看一本都市小说，而你的爸爸则在刷着手机，浏览着某些网页。")
     ctrl.addButton("前去洗漱", lambda: (ctrl.clearPanel(), next_scene()))
 
 def next_scene():
@@ -43,7 +43,7 @@ def ask_parents():
     ctrl.addStoryText("你的爸爸向你挥了挥他的手机，'最近哈尔滨的冰雪大世界又一次走红，我想着我们能不能假期也去那儿玩一玩呢？'")
     ctrl.addStoryText("'好啊，那去哪儿玩呢？'")
     ctrl.addStoryText("你的爸爸说，'最近哈尔滨的冰雪大世界又一次走红了，今年的各种活动筹备比往年做得更好，我们可以去那儿玩一玩。'")
-    ctrl.addStoryText("你的妈妈说：'要是嫌太冷的话，咱们也可以去趟海南，回孩子他姥爷家玩玩。'")
+    ctrl.addStoryText("你的妈妈说：'要是嫌太冷的话，咱们也可以去趟海南，我看今年海南的文旅宣传的也很好'")
     plan_vacation()
 
 def plan_vacation():
@@ -54,42 +54,47 @@ def plan_vacation():
 
 def go_to_harbin():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你想了想说道，'确实，今年哈尔滨的文旅宣传做得相当好，据说今年投入冰雪大世界运营的资金是往年的好几倍呢。我的朋友圈和抖音也快要被哈尔滨刷屏了，要不我们这个假期也去一趟？'")
+    ctrl.addStoryText("爸爸说：'哈尔滨最近在东北可以说是狠狠火了一把！你在东北大学求学，也没去看看？'你说：'东北大学也不在哈尔滨啊！不过说的也是，东三省是一家，哈尔滨也不远，不如我们也去看看这座北方的“冰城”吧！'妈妈也表示赞同，立刻三步并两步地跑进卧室找冬装去了。")
     choose_transportation() 
 
 def go_to_hainan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("'我有个老叔什么时候去海南了？'你的爸爸说，'你老叔跟他的朋友合伙在海南投资了一座果汁厂，现在正在生产椰汁。他在那边干了不久便成功买下了一套房子，前几天他说等你放假了就带你一起，一家人来海南玩几天。'")
-    ctrl.addStoryText("'好啊,'你的妈妈说，'正好我也想去海南。'")
     choose_transportation()
 
 def choose_transportation():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你爸爸说行那那就这么定了，今年咱们也体验一把游历春节的潮流！我看看出行方式。")
-    ctrl.addStoryText("选择坐高铁或坐飞机或坐绿皮火车")
+    ctrl.addStoryText("爸爸说：'行,那就这么定了，今年咱们也体验一把游历春节的潮流！我去看看出行方式。'")
+    ctrl.addStoryText("选择出行方式")
     ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flight()))
     ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_train()))
-    ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), choose_train()))
+    ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train()))
+    ctrl.addButton("自驾", lambda: (ctrl.clearPanel(), self_driving()))
 
-def choose_flight():
+def slow_train():#绿皮火车
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你对你的爸爸说把咱们坐飞机吧，飞机更方便更快。")
-    ctrl.addStoryText("你的妈妈说哎呀还是坐高铁吧，高铁更快更安全还能欣赏一路上的风光。")
+    ctrl.addStoryText("妈妈说，哎呀，坐什么绿皮火车，那种车多慢啊，还不舒服，咱们直接坐飞机去吧")
+    choose_flight()
+
+def choose_flight():#飞机
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("你对你的爸爸说爸咱们坐飞机吧，飞机更方便更快。")
+    
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), success_in_get_ticket()))
+
+def self_driving():#自驾
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("妈妈对爸爸说：'咱家的车最近修好了吧？不如直接开过去，还能欣赏沿途美景……'妈妈还没说完，爸爸一脸苦笑地向大家展示了交管12123：他的驾驶证已经扣掉了11分，罚款也没有缴纳。妈妈叹了口气：'算了吧，还是选别的出行方式吧……'")
+    ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), take_high_speed_train()))
+    ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train()))
+    ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flight()))
 
 def choose_high_speed_train():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你对你的爸爸说爸咱们坐高铁吧，高铁更快更安全并且还能欣赏一路上的风光。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), success_in_get_ticket()))
-
-def choose_train():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你对你的爸爸说爸咱们坐绿皮火车吧，体验一下慢节奏的旅行。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), success_in_get_ticket()))
+    ctrl.addStoryText("你的妈妈说：'哎，坐动车需要频繁中转啊，咱们还是坐飞机吧，省时省力'")
+    choose_flight()
       
 def success_in_get_ticket():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText('你的爸爸打开了高铁12306并开始查询相应的车票。过了一会儿他高兴地拍了拍手说好了我已经成功地抢到了三张票，时间是2月8号早上7点40从新民北站发车前往叉叉叉。你妈妈慢点起来说好啊我已经迫不及待了。')
+    ctrl.addStoryText("你的爸爸打开了飞猪旅行，并开始查询相应的航班。过了一会儿他高兴地拍了拍手说：'好了我已经成功地抢到了三张票，时间是2月8号早上7点40从桃仙机场起飞，飞往美兰机场'。你妈妈说:'''好啊,我已经迫不及待了。'''")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), plan_vacation_days()))
 
 def plan_vacation_days():
@@ -101,8 +106,8 @@ def night_before_departure():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("时间飞逝，很快到了2月7日的晚上。家里的气氛格外热闹，你们一家人围坐在客厅里，一边检查装好的行李，一边讨论着第二天的出行细节。")
-    ctrl.addStoryText("“明天的火车是早上7点40分，我们最好7点前20前就到北站。”爸爸说，一边检查着票务信息。")
-    ctrl.addStoryText("“我准备了一些小吃和水果，可以在火车上吃。”妈妈从厨房拿出一袋零食，放在行李旁边。")
+    ctrl.addStoryText("“明天的飞机是早上7点40分，我们最好7点就到机场。”爸爸说，一边检查着航班信息。")
+    ctrl.addStoryText("“我准备了一些小零食，可以在飞机上吃。”妈妈从厨房拿出一袋零食，放在行李旁边。")
     ctrl.addButton("检查个人物品", lambda: (ctrl.clearPanel(), check_personal_items()))
     ctrl.addButton("询问是否需要带其他东西", lambda: (ctrl.clearPanel(), ask_if_need_to_bring_other_items()))
 
@@ -129,82 +134,50 @@ def early_morning():
 
 def arrival_at_train_station():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("车子在清晨的街道上行驶，没有平日的喧嚣，一切都显得格外宁静。在爸爸熟练的驾驶下，你们在6点50分到达了新民北站。车站前已经有了其他旅客的身影，大家都带着期待的表情，准备开始自己的旅程。")
+    ctrl.addStoryText("车子在清晨的街道上行驶，没有平日的喧嚣，一切都显得格外宁静。6点50分，你们到达了沈阳桃仙国际机场。候机大厅前已经有了其他旅客的身影，大家都带着期待的表情，准备开始自己的旅程。")
     ctrl.addButton("进站安检", lambda: (ctrl.clearPanel(), enter_station_security_check()))
     ctrl.addButton("在站台外稍作休息", lambda: (ctrl.clearPanel(), rest_outside_station()))
 
 def enter_station_security_check():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你们决定尽早进站，以免赶时间。安检过程井然有序，不一会儿，你们就通过了安检，来到了候车大厅。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), wait_for_train()))
+    ctrl.addStoryText("你们决定尽早进站，以免赶时间。安检过程井然有序，不一会儿，你们就通过了安检，来到了候机大厅。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), wait_for_flight()))
 
 def rest_outside_station():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你们找了个靠近入口的长椅坐下，看着来来往往的人群。爸爸提醒，“我们不要休息太久，还是早点进站比较好。”")
     ctrl.addButton("进站安检", lambda: (ctrl.clearPanel(), enter_station_security_check()))
 
-def wait_for_train():
+def wait_for_flight():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("不久后，你们站起身，带着行李，踏入了高铁站内。随着列车的到来，你们的旅程即将拉开序幕。这不仅是一场跨越千里的旅行，更是一段家人共度的宝贵时光。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), onboard_train()))
+    ctrl.addStoryText("你们在候机大厅中稍作休息，不久，广播开始通知登机。你们跟随人流走向登机口，准备登机。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), onboard_flight()))
 
-def onboard_train():
+def onboard_flight():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    # ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("登上站台，你发现已经有很多人在排队了。你和爸爸妈妈按顺序排起了队，等待高铁的到来。")
-    ctrl.addStoryText("“四号站台有列车进入，四号站台有列车进入”伴随着广播的声音响起，一列“和谐号”高铁动车组徐徐驶入站台。")
-    ctrl.addStoryText("妈妈问：“咱们是哪节车厢来着？”你掏出手机，点开了“铁路12306”。")
-    # ctrl.addTextInput("请输入你的车厢和座位信息：", submit_seat_info)
-    sit_down()
-def submit_seat_info(seat_info):
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText(f"你、你的爸爸和你的妈妈登上了对应的车厢，开始寻找属于你们的座位。{seat_info}……你找到了指定的座位，但是发现那里已经有人了。")
-    ctrl.addButton("再次查看12306上的座位信息", lambda: (ctrl.clearPanel(), check_seat_info_again()))
-    ctrl.addButton("上前询问", lambda: (ctrl.clearPanel(), ask_in_person()))
+    ctrl.addStoryText("你们走过登机桥，登上了飞往海南的飞机。找到了自己的座位，安顿好行李，你们开始等待飞机起飞。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), flight_take_off()))
 
-def check_seat_info_again():
+def flight_take_off():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你又一次打开了12306，找到了座位信息，发现他们坐的就是你们的位置。")
-    ctrl.addButton("上前询问", lambda: (ctrl.clearPanel(), ask_in_person()))
+    ctrl.addStoryText("飞机缓缓地滑向跑道，然后加速冲刺，不一会儿，飞机已经离地而起，飞向了蓝天。你们的旅程，正式开始了。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), flight_landing()))
 
-def ask_in_person():
+def flight_landing():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addTextInput("请输入你的询问内容：", submit_inquiry)
+    ctrl.addStoryText("经过几个小时的飞行，飞机平稳地降落在了海南美兰机场。你们收拾好自己的行李，跟随其他乘客离开了飞机。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), arrival_in_hainan1()))
 
-def submit_inquiry(inquiry):
+def arrival_in_hainan1():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    if "请" in inquiry or "谢谢" in inquiry or "能" in inquiry:
-        ctrl.addStoryText("他们查看了自己的座位信息，发现他们坐错了位置，于是说到”哎呀，不好意思啊小伙子，我们坐错位置了“。")
-        ctrl.addButton("落座", lambda: (ctrl.clearPanel(), sit_down()))
-    else:
-        ctrl.addStoryText("老人给我上了一课。")
-        ctrl.addButton("落座", lambda: (ctrl.clearPanel(), sit_down_unpleasant()))
+    ctrl.addStoryText("你们走出机场，感受到了海南的热带气候。阳光明媚，空气中弥漫着海风的味道。你们的海南之旅，正式开始了。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), start_journey_in_hainan()))
 
-def sit_down():
+def start_journey_in_hainan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你和父母坐到了自己的座位上，开始享受这次旅行。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), start_journey()))
+    ctrl.addStoryText("你们决定先去酒店休息一下，然后开始在海南的旅行。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), new_day_in_hainan()))
 
-def sit_down_unpleasant():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你心里闷闷不乐，没有跟你的爸爸妈妈说一句话。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), start_journey()))
-
-def start_journey():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("高铁启动了，广播提示音响起：“欢迎乘坐本次列车！本次列车的始发站是沈阳北站，终到站是广州站，途经北京、上海、长沙等城市，全程预计耗时15小时，请各位乘客注意安全，祝您旅途愉快。”")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), enjoy_the_scenery()))
-
-def enjoy_the_scenery():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("海南，我们来了！")
-    ctrl.addStoryText("随着新民北站那悠长而振奋人心的汽笛声在晨曦微光中嘹亮奏响，你与父母携手迈开了这场跨越中国南北、直指海南岛的梦幻之旅。高铁车厢内明亮宽敞且设施完备，座椅设计融入了人性化考量，每一寸空间都精心雕琢以确保旅途中最大程度的舒适体验，每一个细节之处无不彰显出现代交通科技的便捷高效。车窗外的世界如同一部缓缓拉开序幕的纪录片，伴随着列车的疾速奔驰，不断变换着一幅幅生动的画面，讲述着华夏大地的丰富多样和地域变迁。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), arrival_in_hainan()))
-
-def arrival_in_hainan():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("次日清晨，曙光初照，列车驶过了陆地的最后一段距离，当它稳稳跨过桥梁的一刹那，眼前的视野豁然开朗，海天一线的壮观景象令人惊艳不已。这是你首次如此亲密地感受到大海那无边无际的辽阔，碧波万顷中，浪花翻滚跳跃，仿佛是海洋以其热烈的姿态张开宽广的怀抱，热情欢迎远方的客人。当你终于踏上这片湿润而温暖的海南土地，感受着咸涩清新的海风轻轻拂过脸颊，那种属于海洋的独特气息深深地烙印在心中，成为你对这个热带天堂最初也是最深刻的印象。这一全新的开始，昭示着一段充满奇妙冒险与惊喜发现的旅程就此揭开华丽的篇章。")
-    ctrl.addButton("进入梦乡", lambda: (ctrl.clearPanel(), new_day_in_hainan()))
 
 def new_day_in_hainan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
@@ -563,7 +536,7 @@ def share_travel_experiences():
 
 def mom_shares_experience():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("妈妈接着说：“我最喜欢的是在亚龙湾的海滩上，那里的沙子和海水，还有那边的阳光，都是那么的温暖和舒适。我觉得那几天我们就像住在了天堂里。”")
+    ctrl.addStoryText("妈妈接着说：“我最喜欢的是在亚龙湾的海滩上，那里的沙子和海水，还有那边的阳光，都是那么的温暖和舒适。我觉得那几天我们就像住在了仙境里。”")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), you_share_experience()))
 
 def you_share_experience():
@@ -624,4 +597,8 @@ def end_message_part4():
 def end_message_part5():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("温馨地，你的旅行游戏团队")
+
+
+
+
 
