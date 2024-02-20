@@ -144,7 +144,7 @@ def night_before_departureforhaerbin():
 def night_before_departure():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.setTime('2024-02-07 19:00:00')
-    ctrl.setMusic('bgm3')
+    ctrl.setMusic('bgm2')
     ctrl.addStoryText("时间飞逝，很快到了2月7日的晚上。家里的气氛格外热闹，你们一家人围坐在客厅里，一边检查装好的行李，一边讨论着第二天的出行细节。")
     ctrl.addStoryText("“明天的飞机是早上7点40分，我们最好7点就到机场。”爸爸说，一边检查着航班信息。")
     ctrl.addStoryText("“我准备了一些小零食，可以在飞机上吃。”妈妈从厨房拿出一袋零食，放在行李旁边。")
