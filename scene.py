@@ -319,7 +319,8 @@ def take_sunset_photo():
 def dinner():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.setTime('2024-02-09 17:45:00')
-    ctrl.addStoryText("日落之后，天色渐渐暗淡下来，你们在海边的一家餐厅享用晚餐。餐后，你们回到酒店，结束了这充实而又愉快的一天。")
+    ctrl.addStoryText("日落之后，天色渐渐暗淡下来，你们在海边的一家餐厅享用晚餐。窗外，海南的夜空已经被五彩斑斓的烟花点亮。他们站在落地窗前，那璀璨的烟花如同仙境一般，让他们的心灵深处充满了惊喜和欣喜。烟花一朵朵绽放，就像是他们对新的一年的期待和希望一样，充满了无尽的色彩和激情。父亲微笑着看着窗外的烟花，他的眼中闪烁着光芒，那是对新的一年的期待和对家人的深深的爱意。母亲则轻轻地搂住孩子，温暖的怀抱给孩子带来了安全感，她的眼中充满了对孩子的深情和对新的一年的期待。")
+    ctrl.addStoryText('你们知道，这个春节，你们将在旅行中度过，你们将体验到不同的风景，不同的文化，别具特色的。他们期待着这个新的一年，期待着这个新的开始，期待着你们的“游历春节”。')
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_of_day()))
 
 def end_of_day():
@@ -332,7 +333,7 @@ def second_day_in_hainan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.setTime('2024-02-10 07:50:00')
     ctrl.setPosition('海口骑楼老街')
-    ctrl.addStoryText("第二天的阳光在海口骑楼老街的瓷砖上反射出温暖的光芒，你和家人早早地出发，准备探索这个充满历史故事的地方。")
+    ctrl.addStoryText("第二天的阳光在海口骑楼老街的瓷砖上反射出温暖的光芒，你和家人早早地出发，准备探索这个充满历史故事的地方。街边满是是富有年味的红灯笼，让老街充满了喜庆的氛围")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), visit_old_street()))
 
 def visit_old_street():
@@ -670,12 +671,12 @@ def end_message_part2():
 
 def end_message_part3():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("感谢你陪伴我们度过了这段美好的时光。直到下次再见，愿你的日子如同三亚的阳光一样温暖，愿你的生活如这次旅行般精彩无比。")
+    ctrl.addStoryText("感谢你陪伴我们度过了这段美好的时光。在春节这个家人团聚的时刻，你选择与我们在三亚的碧海蓝天下一起探索，感受了文化的韵味和自然的美好，共同创造了难忘的回忆。")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part4()))
 
 def end_message_part4():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("再见了，亲爱的旅伴，直到下一个旅程的召唤。")
+    ctrl.addStoryText("再见了，亲爱的旅伴，在这个春节里，你的参与让我们的旅程更加充满了意义和欢乐。直到下一个旅程的召唤，愿你的生活如这次旅行般精彩无比。")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part5()))
 
 def end_message_part5():
@@ -702,18 +703,17 @@ def end_message_parta():
 
 def end_message_partb():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("感谢你陪伴我们度过了这段美好的时光。直到下次再见，愿你的日子如同哈尔滨的冬日阳光一样明媚，愿你的生活如这次旅行般精彩无比。")
+    ctrl.addStoryText("感谢你陪伴我们度过了这段美好的时光。我们一起体验了游历春节的欢乐，感受了哈尔滨冰雪世界的美妙，体会到了东北人民热情淳朴的风俗。")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_partc()))
 
 def end_message_partc():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("再见了，亲爱的旅伴，直到下一个旅程的召唤。")
+    ctrl.addStoryText("再见了，亲爱的旅伴，在这个“游历春节”的游戏中，你的参与让我们的旅程更加充满了意义和欢乐。直到下一个旅程的召唤，愿你的生活如这次旅行般精彩无比。")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_partd()))
 
 def end_message_partd():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("温馨地，你的旅行游戏团队")
     ctrl.addAboutUsButton()
-
 
 #以下未
