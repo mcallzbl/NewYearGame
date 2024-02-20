@@ -126,7 +126,7 @@ def run():
     ctrl.setCurrentModule('scene')#在脚本文件第一个被调用的函数里设置当前脚本
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)#在每段剧情函数的开头保存当前函数名称
     ctrl.addTime(days=10,hours=0,minutes=0)
-    ctrl.addStoryText('欢迎来到#0000FF“旅行模拟器：春节特别版！”#0000FF')
+    ctrl.addStoryText('欢迎来到#0000FF“旅行模拟器：春节特别版！#0000FF')
     ctrl.addButton("进入游戏",lambda:(ctrl.clearPanel(),getup()))
    
 def getup():
@@ -136,6 +136,7 @@ def getup():
         ctrl.setMoney(114514.00)
     ctrl.addStoryText('冬日的暖阳轻轻地穿透窗帘，斑驳的光影投在你的床头，充满温馨之意。')
     ctrl.addStoryText('你睁开沉睡的双眼，眼角的余光捕捉到了这一切，心中满是满足和慵懒。你伸出双臂，大大地伸了个懒腰。')
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("起床",lambda:(ctrl.clearPanel(),get_up_at_once()))
     ctrl.addButton("再睡一会",lambda:(ctrl.clearPanel(),continue_sleep()))
 
@@ -170,9 +171,10 @@ def ask_parents():
 
 def plan_vacation():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("选择：去哈尔滨/去海南")
+    ctrl.addStoryText("#0000FF选择：去哈尔滨/去海南#0000FF")
     ctrl.addButton("去哈尔滨", lambda: (ctrl.clearPanel(), go_to_harbin()))
     ctrl.addButton("去海南", lambda: (ctrl.clearPanel(), go_to_hainan()))
+
 
 def go_to_harbin():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
@@ -185,17 +187,16 @@ def go_to_hainan():
 
 def choose_transportationforhainnan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("爸爸说：'行,那就这么定了，今年咱们也体验一把游历春节的潮流！我去看看出行方式。'")
-    ctrl.addStoryText("选择出行方式")
+    ctrl.addStoryText("#0000FF选择出行方式#0000FF")
     ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flightforhainan()))
     ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_trainforhainan()))
     ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train2()))#1
-    ctrl.addButton("自驾", lambda: (ctrl.clearPanel(), self_driving()))
+    ctrl.addButton("自驾#", lambda: (ctrl.clearPanel(), self_driving()))
+
 
 def choose_transportationforhaerbin():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("爸爸说：'行,那就这么定了，今年咱们也体验一把游历春节的潮流！我去看看出行方式。'")
-    ctrl.addStoryText("选择出行方式")
+    ctrl.addStoryText("#0000FF选择出行方式#0000FF")
     ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flightforhaerbin()))
     ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_trainforhaerbin()))
     ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train1()))
@@ -233,6 +234,7 @@ def choose_flightforhaerbin():#乘坐飞机去哈尔滨
 def self_driving():#自驾
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("妈妈对爸爸说：'咱家的车最近修好了吧？不如直接开过去，还能欣赏沿途美景……'妈妈还没说完，爸爸一脸苦笑地向大家展示了交管12123：他的驾驶证已经扣掉了11分，罚款也没有缴纳。妈妈叹了口气：'算了吧，还是选别的出行方式吧……'")
+    ctrl.addButton('#0000FF选择：#0000FF')
     ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_trainforhainan()))
     ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train2()))
     ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flightforhainan()))
@@ -260,7 +262,7 @@ def success_in_get_ticketforhaerbin():
 
 
 def night_before_departureforhaerbin():
-    ctrl.changeScript('scene2','unable_to_sleep')
+    ctrl.changeScript('scene2','night_before_travel')
 
 def night_before_departure():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
@@ -268,6 +270,7 @@ def night_before_departure():
     ctrl.addStoryText("时间飞逝，很快到了2月7日的晚上。家里的气氛格外热闹，你们一家人围坐在客厅里，一边检查装好的行李，一边讨论着第二天的出行细节。")
     ctrl.addStoryText("“明天的飞机是早上7点40分，我们最好7点就到机场。”爸爸说，一边检查着航班信息。")
     ctrl.addStoryText("“我准备了一些小零食，可以在飞机上吃。”妈妈从厨房拿出一袋零食，放在行李旁边。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("检查个人物品", lambda: (ctrl.clearPanel(), check_personal_items()))
     ctrl.addButton("询问是否需要带其他东西", lambda: (ctrl.clearPanel(), ask_if_need_to_bring_other_items()))
 
@@ -295,6 +298,7 @@ def early_morning():
 def arrival_at_train_station():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("车子在清晨的街道上行驶，没有平日的喧嚣，一切都显得格外宁静。6点50分，你们到达了沈阳桃仙国际机场。候机大厅前已经有了其他旅客的身影，大家都带着期待的表情，准备开始自己的旅程。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("进站安检", lambda: (ctrl.clearPanel(), enter_station_security_check()))
     ctrl.addButton("在站台外稍作休息", lambda: (ctrl.clearPanel(), rest_outside_station()))
 
@@ -363,6 +367,7 @@ def arrival_in_hainan():
 def explore_volcano_park():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("进入火山口国家地质公园，一片原始森林气息扑面而来。高大的热带树木遮天蔽日，偶尔可以看到几缕阳光透过密集的树冠洒落下来。你深深地吸了一口清新的空气，感到身心都为之一振。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("探索熔岩隧道", lambda: (ctrl.clearPanel(), explore_lava_tunnel()))
     ctrl.addButton("登顶火山口", lambda: (ctrl.clearPanel(), climb_to_volcano_crater()))
 
@@ -374,6 +379,7 @@ def explore_lava_tunnel():
 def climb_to_volcano_crater():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你们决定挑战一下自己，登上火山口。虽然火山已经沉寂许久，但登顶的过程仍然令人兴奋。沿途可以看到各种火山喷发形成的岩石和火山灰，这些都是大自然力量的见证。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("拍摄全景照片", lambda: (ctrl.clearPanel(), take_panoramic_photo()))
     ctrl.addButton("录制旅行Vlog", lambda: (ctrl.clearPanel(), record_travel_vlog()))
 
@@ -395,6 +401,7 @@ def after_volcano_park():
 def evening_in_hainan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("在酒店休息片刻之后，你们决定去海边看日落。海南的海边在傍晚时分特别迷人，金色的阳光洒在波光粼粼的海面上，海浪轻轻拍打着沙滩，发出宁静而又悦耳的声音。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("沿着海边散步", lambda: (ctrl.clearPanel(), walk_along_beach()))
     ctrl.addButton("找个好位置拍摄日落", lambda: (ctrl.clearPanel(), take_sunset_photo()))
 
@@ -427,6 +434,7 @@ def second_day_in_hainan():
 def visit_old_street():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你们走在被称为“博爱路”的老街上，爸爸指着一座骑楼说：“看，这些骑楼是海口的灵魂，它们见证了这座城市的变迁。”妈妈则兴奋地拿出相机，记录下这些具有东南亚风情的建筑。骑楼的每一处细节都让你们驻足欣赏，从精致的雕饰到色彩斑斓的彩瓷，每一幅图案都仿佛在诉说着一个古老的故事。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("参观历史悠久的四牌楼", lambda: (ctrl.clearPanel(), visit_four_archways()))
     ctrl.addButton("逛一逛老街的特色店铺", lambda: (ctrl.clearPanel(), visit_specialty_shops()))
 
@@ -438,6 +446,7 @@ def visit_four_archways():
 def visit_specialty_shops():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你们漫步在老街上，每一家店铺都有其独特的魅力。你们走进一家售卖手工艺品的店铺，店内摆满了各式各样的工艺品，每一件都是手工制作，充满了海南的地方特色。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("买一些纪念品", lambda: (ctrl.clearPanel(), buy_souvenirs()))
     ctrl.addButton("和店主学习制作工艺品", lambda: (ctrl.clearPanel(), learn_handicraft_with_shopkeeper()))
 
@@ -459,6 +468,7 @@ def learn_handicraft_with_shopkeeper():
 def afternoon_in_hainan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("午后的阳光开始变得温柔，你们在骑楼下的长廊中找了一家评价很高的咖啡馆坐下来，享受一杯香浓的咖啡。妈妈说：“这就是海口人的生活，慢节奏，享受每一刻。”你们一边品味咖啡，一边观察着街上的行人，感受着这个城市独有的气息。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("在咖啡馆里休息一会儿", lambda: (ctrl.clearPanel(), rest_in_cafe()))
     ctrl.addButton("继续探索老街其他区域", lambda: (ctrl.clearPanel(), continue_exploring_old_street()))
 
@@ -487,6 +497,7 @@ def third_day_in_hainan():
 def visit_green_park():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你们首先来到了大门区，入口处的热带植物造型迎接着每一位游客。爸爸建议：“这么多景区，我们可以分头行动，然后分享各自看到的美景。”")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("分头行动", lambda: (ctrl.clearPanel(), split_up()))
     ctrl.addButton("一起行动", lambda: (ctrl.clearPanel(), stick_together()))
 
@@ -498,6 +509,7 @@ def split_up():
 def meet_calligrapher():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("在竹林深处，你偶遇了一位正在练习书法的老先生，他看上去颇有些高人之姿。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("观看老先生书法", lambda: (ctrl.clearPanel(), watch_calligraphy()))
     ctrl.addButton("邀请老先生一起参观", lambda: (ctrl.clearPanel(), invite_calligrapher()))
 
@@ -524,6 +536,7 @@ def parents_experience():
 def afternoon_in_wanlvyuan():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("午后，你们在草坪区汇合，一起分享了各自的经历。妈妈拿出了她拍摄的内湖美景，而你则展示了老先生送你的书法作品。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("在草坪上休息", lambda: (ctrl.clearPanel(), rest_on_lawn()))
     ctrl.addButton("去儿童游乐区体验游乐设施", lambda: (ctrl.clearPanel(), visit_playground()))
 
@@ -560,6 +573,7 @@ def visit_yalong_bay():
 def go_directly_to_beach():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你们决定先沉浸在亚龙湾美丽的海滩中。沙滩上的沙子细腻柔软，如同踏在细糖上，海水清澈透明，可以清晰地看到脚下的小鱼在游弋。你们找了一个靠近水边的地方，铺开沙滩毯，准备享受一天的海滩时光。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("阳光浴", lambda: (ctrl.clearPanel(), sunbathe()))
     ctrl.addButton("海水浴", lambda: (ctrl.clearPanel(), swim()))
 
@@ -577,6 +591,7 @@ def afternoon_in_yalong_bay():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("在享受了一段美好的海水浴后，你回到沙滩上，看到爸爸妈妈也同样享受着海水的清凉。你们互相嬉戏，偶尔还会相互泼洒海水，笑声融入海风，成为亚龙湾上的另一道美丽风景。")
     ctrl.addStoryText("午后，阳光开始变得温柔，你们决定去探索亚龙湾的其他美景。沿着海滩行走，椰影婆娑，你们来到了一片红树林。这里的红树林生长在清澈的海水中，根部交错形成了独特的自然景观。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("探索红树林", lambda: (ctrl.clearPanel(), explore_mangrove_forest()))
     ctrl.addButton("参加海上运动", lambda: (ctrl.clearPanel(), participate_in_water_sports()))
 
@@ -593,6 +608,7 @@ def participate_in_water_sports():
 def evening_in_yalong_bay():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("傍晚时分，你们回到海滩，正好赶上日落的美景。夕阳将天空染成了金色，海面也被镀上了一层橘黄，美得让人心醉。你们在这美妙的时刻，静静地坐在沙滩上，享受着家人之间的温馨。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("在沙滩上享受夕阳", lambda: (ctrl.clearPanel(), enjoy_sunset_on_beach()))
     ctrl.addButton("在海边餐厅用晚餐", lambda: (ctrl.clearPanel(), have_dinner_on_seaside()))
 
@@ -618,6 +634,7 @@ def fourth_day_in_hainan():
 def evening_in_yalong_bay():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("傍晚时分，你们回到海滩，正好赶上日落的美景。夕阳将天空染成了金色，海面也被镀上了一层橘黄，美得让人心醉。你们在这美妙的时刻，静静地坐在沙滩上，享受着家人之间的温馨。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("在沙滩上享受夕阳", lambda: (ctrl.clearPanel(), enjoy_sunset_on_beach()))
     ctrl.addButton("在海边餐厅用晚餐", lambda: (ctrl.clearPanel(), have_dinner_at_seaside_restaurant()))
 
@@ -645,6 +662,7 @@ def last_day_in_sanya():
 def visit_sanya_love_forever_park():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("到达景区，你们首先被那座宏大的舞台建筑所震撼。它不仅仅是一个表演的场所，更像是一座时光穿梭机，准备带领你们穿越到古老的三亚。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("先了解景区的历史文化", lambda: (ctrl.clearPanel(), learn_about_park_history()))
     ctrl.addButton("直接进入剧场等待演出开始", lambda: (ctrl.clearPanel(), wait_for_show_to_start()))
 
@@ -661,6 +679,7 @@ def wait_for_show_to_start():
 def watch_show():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("演出开始了，舞台上的演员们以精湛的舞技和声情并茂的歌声，将三亚的千年历史展现得淋漓尽致。在《三亚千古情》的演绎下，你们仿佛真的经历了鉴真东渡时的惊涛骇浪，听到了鹿回头美丽传说中的海浪声。")
+    ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("与演员互动", lambda: (ctrl.clearPanel(), interact_with_actors()))
     ctrl.addButton("全神贯注观看演出", lambda: (ctrl.clearPanel(), watch_show_intently()))
 
@@ -756,6 +775,34 @@ def end_message_part5():
     ctrl.addStoryText("温馨地，你的旅行游戏团队")
 
 
+def farewell2():
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("飞机在云端穿行，一家人的谈话还在继续，他们讨论着下一次的旅行目的地，每个人都充满了期待。旅行的意义不仅在于目的地的风景，更在于途中的陪伴和回家后的回忆。这次哈尔滨之旅，无疑给每个家庭成员留下了深刻的印象，成为了他们共同生活中宝贵的一部分。亲爱的玩家，")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message()))
+
+def end_message():
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("随着这趟虚拟旅程的结束，我们希望你的心中充满了欢乐与温馨，就如同你刚刚完成的这段奇妙之旅。在哈尔滨的冰雪大世界里，我们一起探索了冰雪的奇迹，体验了东北的热情，分享了家庭间的温情，这些宝贵的记忆将永远珍藏在我们的心中。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part2()))
+
+def end_message_part2():
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("虽然现在我们要告别，但请记住，旅行的魅力在于每次出发都是一次新的开始。无论是在现实世界还是在游戏的世界里，新的冒险总是等待着我们去发现。我们期待在未来的旅程中再次与你相遇，探索更多未知的世界，创造更多难忘的故事。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part3()))
+
+def end_message_part3():
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("感谢你陪伴我们度过了这段美好的时光。直到下次再见，愿你的日子如同哈尔滨的冬日阳光一样明媚，愿你的生活如这次旅行般精彩无比。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part4()))
+
+def end_message_part4():
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("再见了，亲爱的旅伴，直到下一个旅程的召唤。")
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part5()))
+
+def end_message_part5():
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("温馨地，你的旅行游戏团队")
 
 
 
