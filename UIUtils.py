@@ -559,7 +559,7 @@ class UIUtils(QMainWindow):
 
     #设置屏幕上显示的UI
     def setTime(self,newTime:str):
-        self.time_label.setText(newTime[5:])
+        self.time_label.setText(newTime[5:16])
 
     #设置屏幕上显示的金钱数
     def setMoney(self,newMoney):

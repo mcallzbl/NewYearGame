@@ -76,7 +76,7 @@ class Controller:
         self.uiManager.setImmediateOutput()
 
     def setTime(self,newTime:str):
-        self.uiManager.add_task(lambda:self.uiManager.setTime(newTime))
+        self.uiManager.setTime(newTime)
         self.dataManager.setGameTime(newTime)
 
     def addMoney(self,money):

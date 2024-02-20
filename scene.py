@@ -34,11 +34,12 @@ def get_up_at_once():
     ctrl.addStoryText("你掀开被子坐了起来，等自己清醒了几分后起身下床，穿好衣服后走出了你的卧室。")
     ctrl.setPosition('客厅')
     ctrl.addStoryText("今天是周末，你的爸爸妈妈都在家休息。你的爸爸妈妈现在正坐在客厅的沙发上，你的妈妈在看一本都市小说，而你的爸爸则在刷着手机，浏览着某些网页。")
-    ctrl.addButton("前去洗漱", lambda: (ctrl.clearPanel(), next_scene(),ctrl.setPosition('洗手间'),ctrl.addTime(days=0,hours=0,minutes=5)))
+    ctrl.addButton("前去洗漱", lambda: (ctrl.clearPanel(),ctrl.setPosition('洗手间'),ctrl.addTime(days=0,hours=0,minutes=5), next_scene()))
 
 def next_scene():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("洗漱完毕后，你进入了客厅，坐在了餐桌旁，准备找一些吃的。")
+    ctrl.setPosition('客厅')
     ctrl.addStoryText("你找到了几块面包，又拿了一瓶酸奶，坐在餐桌旁开始吃。")
     ctrl.addStoryText("你发现你的爸爸妈妈好像在谋划着什么事情，于是你好奇地问道，“爸妈，你们在干嘛？”")
     ctrl.addButton("询问爸妈", lambda: (ctrl.clearPanel(), ask_parents()))
