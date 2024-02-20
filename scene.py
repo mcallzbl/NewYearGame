@@ -48,13 +48,8 @@ def chat_with_gpt3(user_input):
         create_action_buttons(global_plans)
 
 def generate_encouragement(plan):
-    prompt = f"请为以下计划项生成一段鼓励的话：\n计划项：{plan}\n鼓励的话："
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=60
-    )
-    encouragement = response.choices[0].text.strip()
+    # 现在这个函数只是简单地返回完成确认的话
+    encouragement = f"{plan} - 已完成"
     ctrl.addStoryText(encouragement)
     ctrl.setImmediateOutput()
     # 检查是否所有计划都已经讨论过
@@ -77,9 +72,13 @@ def create_action_buttons(plans):
             ctrl.addButton(plan, lambda plan=plan: on_button_click(plan))
 
 def on_button_click(plan):
-    generate_encouragement(plan)
+    mark_plan_as_completed(plan)
     completed_plans.append(plan)
     update_buttons()
+
+def mark_plan_as_completed(plan):
+    ctrl.addStoryText(f"{plan} - 已完成")
+    ctrl.setImmediateOutput()
 
 def update_buttons():
     ctrl.clearPanel()
@@ -91,17 +90,20 @@ def update_buttons():
     check_all_completed()
 
 def check_all_completed():
+    # 检查是否所有计划项都已完成
     if all(plan in completed_plans for plan in global_plans):
-        ctrl.addTime(days=1)
-        if check_date():
-            start_new_day()
-        else:
-            ctrl.addStoryText("我们已经完成了所有的计划，现在是2月6日。")
-
+        ctrl.addTime(days=1)  # 时间递进到下一天
+        start_new_day()  # 开始新的一天
 def start_new_day():
-    global completed_plans
-    completed_plans = []
-    create_action_buttons(global_plans)
+    # 检查日期是否已经到达目标日期
+    if check_date():
+        # 如果日期还未到达，重新创建按钮以便用户可以再次点击
+        ctrl.clearPanel()
+        for plan in global_plans:
+            ctrl.addButton(plan, lambda plan=plan: on_button_click(plan))
+    else:
+        # 如果日期已到，显示结束信息
+        ctrl.addStoryText("我们已经完成了所有的计划，现在是2月6日。")
 
 def ask_for_plan():
     ctrl.clearPanel()
@@ -113,8 +115,7 @@ def plan():
         ask_for_plan()
     else:
         ctrl.addStoryText("时间已经到达2月6日。")
-
-
+        
 
 
 
@@ -126,7 +127,7 @@ def run():
     ctrl.setCurrentModule('scene')#在脚本文件第一个被调用的函数里设置当前脚本
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)#在每段剧情函数的开头保存当前函数名称
     ctrl.addTime(days=10,hours=0,minutes=0)
-    ctrl.addStoryText('欢迎来到#0000FF“旅行模拟器：春节特别版！#0000FF')
+    ctrl.addStoryText('欢迎来到#0000FF“旅行模拟器：春节特别版”！#0000FF')
     ctrl.addButton("进入游戏",lambda:(ctrl.clearPanel(),getup()))
    
 def getup():
@@ -246,18 +247,18 @@ def choose_high_speed_trainforhainan():
 def success_in_get_ticket():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你的爸爸打开了携程旅行，并开始查询相应的航班。过了一会儿他高兴地拍了拍手说：'好了我已经成功地抢到了三张票，时间是2月8号早上7点40从桃仙机场起飞，飞往美兰机场'。你妈妈说:'''好啊,我已经迫不及待了。'''")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(),night_before_departure() ))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(),plan_vacation_days()))
 
 
 def success_in_get_ticketforhaerbin():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你的爸爸打开了高铁12306，并开始查询相应的高铁班次。过了一会儿他高兴地拍了拍手说：'好了我已经成功地抢到了三张票，时间是2月8号早上7点40从新民北站出发，直达哈尔滨西站！'。你妈妈说:'''好啊,我已经迫不及待了。'''")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), night_before_departureforhaerbin()))
-# def plan_vacation_days():
-#     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-#     ctrl.addStoryText("现在是1月19日，距离旅游还有一段时间，你寻思着假期该怎么安排呢？")
-#     ctrl.addStoryText("你点开了手机上的'智慧东大'软件.虽然他被同学们戏称为“智障东b”，但是这个软件最近有所更新，能够当一个智能记事本用")
-#     plan()
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), plan_vacation_days()))
+def plan_vacation_days():
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.addStoryText("现在是1月19日，距离旅游还有一段时间，你寻思着假期该怎么安排呢？")
+    ctrl.addStoryText("你点开了手机上的'智慧东大'软件.虽然他被同学们戏称为“智障东b”，但是这个软件最近有所更新，能够当一个智能记事本用")
+    plan()
 
 
 
