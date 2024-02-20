@@ -8,8 +8,8 @@ import re
 import sys
 import time
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,QMainWindow,QPushButton,QStackedWidget
-from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot
-from PyQt6.QtGui import  QPalette,QPainter,QFont, QFontDatabase,QTextCharFormat, QColor,QIcon,QTextCursor,QPixmap
+from PyQt6.QtCore import QMetaObject,Qt,pyqtSlot,QTimer
+from PyQt6.QtGui import  QPalette,QPainter,QFont, QFontMetrics, QFontDatabase,QTextCharFormat, QColor,QIcon,QTextCursor,QPixmap
 from DataUtils import DataUtils 
 import pygame
 import os
@@ -38,32 +38,77 @@ class UIUtils(QMainWindow):
         self.stacked_widget = QStackedWidget()
         self.setCentralWidget(self.stacked_widget)
         
-        
         self.mainWidget = QWidget()
         self._initMainScreen()
 
         self.gameWidget = QWidget()
         self._initGameUI()
+
+        self.aboutWidget = QWidget()
+        self._initAboutScreen()
         
         self.stacked_widget.addWidget(self.mainWidget)
         self.stacked_widget.addWidget(self.gameWidget)
+        self.stacked_widget.addWidget(self.aboutWidget)
         self.stacked_widget.setCurrentIndex(0)
+
+    def _initAboutScreen(self):
+        aboutLayout = QVBoxLayout(self.aboutWidget)
+        Overlay = QWidget()
+        Overlay.setStyleSheet("""
+            QWidget {
+                background-color: rgba(255, 255, 255, 0.5); /* 白色半透明背景 */
+                border: none;
+            }
+            
+        """)
+        textLayout = QVBoxLayout(Overlay)
+        fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getResourcePath(),'Resource/font2'))
+        fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
+        self.aboutlabel = QLabel('''开发团队:\n“你说的队”\n\n成员列表:\n计算机类II2303 单新意\n计算机类II2310 李佳成\n\n分工:\n剧情及脚本 单新意\nUI设计 李佳成\n\n感谢您的游玩''')
+        self.aboutlabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.aboutlabel.setStyleSheet("color: black; background-color: transparent;")
+        self.aboutlabel.setFont(QFont(fontFamilies[0],23))
+        exitButton = QPushButton("退出", Overlay)
+        self.setButtonStyle(exitButton)
+        exitButton.clicked.connect(self.stopScrollingAndClose)
+        exitButton.setMinimumWidth(100)
+        textLayout.addWidget(self.aboutlabel)
+        textLayout.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        
+        self.timer = QTimer()
+        def scrollText():
+            pos = self.aboutlabel.pos()
+            self.aboutlabel.move(pos.x(), pos.y() - 1)
+            pos = self.aboutlabel.pos()
+            if pos.y() + self.aboutlabel.height() < 0:
+                self.aboutlabel.move(pos.x(), Overlay.height())
+        self.timer.timeout.connect(scrollText)
+        self.timer.start(25)
+        aboutLayout.addWidget(Overlay)
+        
+        buttonLayout = QHBoxLayout()
+        buttonLayout.addStretch()
+        buttonLayout.addWidget(exitButton)
+        buttonLayout.addStretch()
+        textLayout.addLayout(buttonLayout)
+        self.aboutlabel.lower()
+    
+    def stopScrollingAndClose(self):
+        self.timer.stop()
+        self.stacked_widget.setCurrentIndex(0)
+    
         
     def _initMainScreen(self):
         mainLayout = QVBoxLayout(self.mainWidget)
-
         palette = QPalette()
         palette.setColor(QPalette.ColorRole.WindowText, QColor('white'))
-
-
         title = QLabel("旅途乐章：春节版")
         fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getResourcePath(),'Resource/font2'))
         fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
-       # font = QFont(fontFamilies[0],32)
         title.setFont(QFont(fontFamilies[0],32))
         title.setPalette(palette)
         mainLayout.addWidget(title)
-
         version = QLabel('v1.0')
         version.setFont(QFont(fontFamilies[0],20))
         version.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
@@ -71,17 +116,12 @@ class UIUtils(QMainWindow):
         mainLayout.addWidget(version)
         mainLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         mainLayout.setSpacing(20)
-        
-        #self.background_label = QLabel(self)
         self.background = QPixmap(os.path.join(self.dataManager.getResourcePath(),'Resource/background'))
-        # self.background_label.setPixmap(pixmap)
-        # self.background_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
         btn_newGame = QPushButton('新的游戏')
         btn_continue = QPushButton('继续游戏')
         btn_about_us =  QPushButton('关于我们')
         btn_exit = QPushButton('退出游戏')
-        
+    
         self.setButtonStyle(btn_newGame)
         self.setButtonStyle(btn_continue)
         self.setButtonStyle(btn_about_us)
@@ -99,8 +139,6 @@ class UIUtils(QMainWindow):
         painter = QPainter(self)
         scaled_pixmap = self.background.scaled(
             self.size(), Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
-
-        # 计算图片应该绘制的矩形区域以保持居中显示
         x = (self.width() - scaled_pixmap.width()) / 2
         y = (self.height() - scaled_pixmap.height()) / 2
         x = int(x)
@@ -118,7 +156,9 @@ class UIUtils(QMainWindow):
         self.runScript(self.dataManager.getScript(),self.dataManager.getFunction())
 
     def about_us(self):
-        pass
+        self.stacked_widget.setCurrentIndex(2)
+        self.timer.start()
+        self.aboutlabel.move(self.aboutlabel.x(),self.size().height()-100)
     
     def exit_game(self):
         self.close()
@@ -200,6 +240,9 @@ class UIUtils(QMainWindow):
         self.story_text.setReadOnly(True)
         self.storyLayout.addWidget(self.story_text)
         self.story_text.verticalScrollBar().valueChanged.connect(self._loadMoreHistory)
+    
+    def clearStory(self):
+        self.story_text.clear()
     
     def loadStatus(self):
         self.setTime(self.dataManager.getTime())
@@ -454,7 +497,7 @@ class UIUtils(QMainWindow):
             return default_format
 
     #在交互区添加一个按钮
-    def addButton(self, button_text, on_click=None):
+    def addButton(self, button_text, on_click=None,immediate = False):
         button = QPushButton(button_text, self.interactivePanel)
         self.setButtonStyle(button)
         # button.setStyleSheet("""
@@ -474,10 +517,10 @@ class UIUtils(QMainWindow):
         # """)
         
         if on_click:
-            #if not immediate:
-            button.clicked.connect(lambda:self.runMethod(on_click))
-            # else :
-            #     button.clicked.connect(on_click)
+            if not immediate:
+                button.clicked.connect(lambda:self.runMethod(on_click))
+            else :
+                button.clicked.connect(on_click)
         self.interactiveLayout.addWidget(button)
 
     #加载故事模块

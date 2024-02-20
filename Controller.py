@@ -125,4 +125,12 @@ class Controller:
         self.setCurrentModule(newScript)
         self.setCurrentProgress(newFunction)
         self.uiManager.add_task(lambda:self.uiManager.changeScript(newScript,newFunction))
-    
+
+    def addAboutUsButton(self):
+       # self.addButton('关于我们',)
+        while not self.messageQueue.empty():
+            self.messageQueue.get()
+        self.uiManager.add_task(lambda:self.dataManager.reCreateDB())
+        self.uiManager.add_task(lambda:self.uiManager.addButton('关于我们',lambda:(self.uiManager.about_us(),self.uiManager.clearStory(),self.clearPanel()),immediate=True))
+        
+        

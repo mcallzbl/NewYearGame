@@ -126,7 +126,7 @@ def run():
     ctrl.setCurrentModule('scene')#在脚本文件第一个被调用的函数里设置当前脚本
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)#在每段剧情函数的开头保存当前函数名称
     ctrl.addTime(days=10,hours=0,minutes=0)
-    ctrl.addStoryText('欢迎来到#0000FF“旅行模拟器：春节特别版！#0000FF')
+    ctrl.addStoryText('欢迎来到#0000FF“旅行模拟器：春节特别版！”#0000FF')
     ctrl.addButton("进入游戏",lambda:(ctrl.clearPanel(),getup()))
    
 def getup():

@@ -106,5 +106,9 @@ ctrl.setMusic(newMusic)
 10.切换脚本
 ctrl.changeScript(newScript,newFunction)
 新脚本名称和函数名称
+
+11.添加关于我们按钮
+ctrl.addAboutUsButton()
+在交互面板添加关于我们按钮
 ```
 
