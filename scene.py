@@ -405,7 +405,7 @@ def invite_calligrapher():
 def stick_together():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你们决定一起行动，共同探索万绿园的每一个景点。你们一边欣赏着美景，一边分享着各自的感受，这种亲密的家庭氛围让旅行变得更加有意义。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), parents_experience()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(),rest_on_lawn()))
 
 def parents_experience():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
@@ -600,36 +600,36 @@ def mom_shares_experience():
 def you_share_experience():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你则回忆起在红树林中的宁静时刻：“那片红树林给我留下了深刻的印象，那里的自然美景和平静，让我感到心灵都被净化了。”")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), family_discussion()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), family_discussion1()))
 
 
 
-def family_discussion():
+def family_discussion1():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("一家人谈论着，每个人的脸上都洋溢着幸福的笑容。旅行中的每个瞬间，无论是宁静的自然景观还是震撼的文化演出，都成为了他们共同记忆的一部分。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), dad_shares_final_thoughts()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), dad_shares_final_thoughts1()))
 
-def dad_shares_final_thoughts():
+def dad_shares_final_thoughts1():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("爸爸深情地说：“这次旅行让我们作为一个家庭更加紧密了，我们共同经历了这么多，看到了三亚的美，感受到了海南的温暖。”")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), mom_agrees()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), mom_agrees1()))
 
-def mom_agrees():
+def mom_agrees1():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("妈妈点头赞同：“是的，这次旅行不仅让我们放松了身心，更重要的是我们一起创造了美好的回忆。”")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), you_contemplate()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), you_contemplate1()))
 
-def you_contemplate():
+def you_contemplate1():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你看着窗外的云层，思绪飞扬：“我们不只是旅行到了一个地方，我们旅行到了过去，感受了文化，现在又带着所有的美好回到现实。”")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), farewell()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), farewellforhainan1()))
 
-def farewell():
+def farewellforhainan1():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("飞机在云端穿行，一家人的谈话还在继续，他们讨论着下一次的旅行目的地，每个人都充满了期待。旅行的意义不仅在于目的地的风景，更在于途中的陪伴和回家后的回忆。这次三亚之旅，无疑给每个家庭成员留下了深刻的印象，成为了他们共同生活中宝贵的一部分。亲爱的玩家，")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message1()))
 
-def end_message():
+def end_message1():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("随着这趟虚拟旅程的结束，我们希望你的心中充满了欢乐与温馨，就如同你刚刚完成的这段奇妙之旅。在三亚的碧海蓝天下，我们一起探索了自然的奥秘，体验了文化的深厚，分享了家庭间的温情，这些宝贵的记忆将永远珍藏在我们的心中。")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part2()))
@@ -657,29 +657,29 @@ def end_message_part5():
 def farewell2():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("飞机在云端穿行，一家人的谈话还在继续，他们讨论着下一次的旅行目的地，每个人都充满了期待。旅行的意义不仅在于目的地的风景，更在于途中的陪伴和回家后的回忆。这次哈尔滨之旅，无疑给每个家庭成员留下了深刻的印象，成为了他们共同生活中宝贵的一部分。亲爱的玩家，")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message2()))
 
-def end_message():
+def end_message2():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("随着这趟虚拟旅程的结束，我们希望你的心中充满了欢乐与温馨，就如同你刚刚完成的这段奇妙之旅。在哈尔滨的冰雪大世界里，我们一起探索了冰雪的奇迹，体验了东北的热情，分享了家庭间的温情，这些宝贵的记忆将永远珍藏在我们的心中。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part2()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_parta()))
 
-def end_message_part2():
+def end_message_parta():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("虽然现在我们要告别，但请记住，旅行的魅力在于每次出发都是一次新的开始。无论是在现实世界还是在游戏的世界里，新的冒险总是等待着我们去发现。我们期待在未来的旅程中再次与你相遇，探索更多未知的世界，创造更多难忘的故事。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part3()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_partb()))
 
-def end_message_part3():
+def end_message_partb():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("感谢你陪伴我们度过了这段美好的时光。直到下次再见，愿你的日子如同哈尔滨的冬日阳光一样明媚，愿你的生活如这次旅行般精彩无比。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part4()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_partc()))
 
-def end_message_part4():
+def end_message_partc():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("再见了，亲爱的旅伴，直到下一个旅程的召唤。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_part5()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), end_message_partd()))
 
-def end_message_part5():
+def end_message_partd():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("温馨地，你的旅行游戏团队")
     ctrl.addAboutUsButton()
