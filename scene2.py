@@ -59,7 +59,7 @@ def on_the_train():
     ctrl.setTime('2024-02-08 07:35:00')
     ctrl.setPosition('火车站')
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.setMusic('bgm3')
+    ctrl.setMusic('bgm2')
     ctrl.addStoryText("时间过得总是又快又慢——快就快在期待的心情上，慢就慢在焦急的等待上。")
     ctrl.addStoryText("你一手一个，两个行李箱就这么被轻松地提了起来，你意识到，自己已经长大了，身体很棒。")
     ctrl.addStoryText("不一会儿，红头绿身的“老干部”和谐号列车就缓缓驶来。")
