@@ -50,18 +50,14 @@ class Controller:
         current_time_str = self.getTime()
         if current_time_str is not None:
             try:
-                # 尝试按照包含秒的格式解析时间
                 current_time = datetime.strptime(current_time_str, "%Y-%m-%d %H:%M:%S")
             except ValueError:
                 try:
-                    # 如果失败，尝试按照不包含秒的格式解析时间
                     current_time = datetime.strptime(current_time_str, "%Y-%m-%d %H:%M")
                 except ValueError:
                     print("无法解析的时间格式")
                     return
-            # 添加时间
             new_time = current_time + timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
-            # 如果原始时间字符串包含秒，那么新的时间字符串也应该包含秒
             if ":00" in current_time_str:
                 self.setTime(new_time.strftime("%Y-%m-%d %H:%M:%S"))
             else:

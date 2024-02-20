@@ -42,15 +42,26 @@ class DataUtils:
             self.create_table()
 
     def reCreateDB(self):
-        self.db_file = os.path.join(self.getRelativePath(),'pp.dat')
-        # 如果文件存在，删除它
-        if os.path.isfile(self.db_file):
-            os.remove(self.db_file)
+        # 连接到数据库
+        self.create_connection()
 
-        # 然后重新创建数据库和表
-        self.conn = sqlite3.connect(self.db_file)
-        self.create_table()
+        # 创建一个 cursor 对象
+        cur = self.conn.cursor()
+
+        # 删除 game_data 和 messages 表中的所有数据
+        cur.execute('DELETE FROM game_data;')
+        cur.execute('DELETE FROM messages;')
+
+        # 提交事务
+        self.conn.commit()
+
+        # 关闭 cursor 和连接
+        cur.close()
+        self.closeConnection()
+        self.update_or_insert_game_data('2024-01-15 08:00','卧室中',145.14,'scene','run','bgm')
+        # 重新初始化数据
         self._initData()
+
     
     def _initData(self):
         self.offset = 0
