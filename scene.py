@@ -205,7 +205,7 @@ def choose_transportationforhaerbin():
 def choose_high_speed_trainforhaerbin():
     ctrl.addStoryText("你说：'好的，咱们坐高铁吧，高铁快还舒适，我们还能欣赏一下沿途的风光'")
     ctrl.addStoryText("妈妈也表示赞同，爸爸开始查看车票")
-    
+    success_in_get_ticketforhaerbin()
 
 def slow_train2():#绿皮火车
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
@@ -244,22 +244,23 @@ def choose_high_speed_trainforhainan():
 def success_in_get_ticket():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你的爸爸打开了携程旅行，并开始查询相应的航班。过了一会儿他高兴地拍了拍手说：'好了我已经成功地抢到了三张票，时间是2月8号早上7点40从桃仙机场起飞，飞往美兰机场'。你妈妈说:'''好啊,我已经迫不及待了。'''")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), plan_vacation_days()))
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(),night_before_departure() ))
 
 
 def success_in_get_ticketforhaerbin():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你的爸爸打开了高铁12306，并开始查询相应的高铁班次。过了一会儿他高兴地拍了拍手说：'好了我已经成功地抢到了三张票，时间是2月8号早上7点40从新民北站出发，直达哈尔滨西站！'。你妈妈说:'''好啊,我已经迫不及待了。'''")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(),  night_before_departure()))
-def plan_vacation_days():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("现在是1月19日，距离旅游还有一段时间，你寻思着假期该怎么安排呢？")
-    ctrl.addStoryText("你点开了手机上的'智慧东大'软件.虽然他被同学们戏称为“智障东b”，但是这个软件最近有所更新，能够当一个智能记事本用")
-    plan()
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), night_before_departureforhaerbin()))
+# def plan_vacation_days():
+#     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+#     ctrl.addStoryText("现在是1月19日，距离旅游还有一段时间，你寻思着假期该怎么安排呢？")
+#     ctrl.addStoryText("你点开了手机上的'智慧东大'软件.虽然他被同学们戏称为“智障东b”，但是这个软件最近有所更新，能够当一个智能记事本用")
+#     plan()
 
 
 
-
+def night_before_departureforhaerbin():
+    ctrl.changeScript('scene2','unable_to_sleep')
 
 def night_before_departure():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
