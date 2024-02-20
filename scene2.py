@@ -3,6 +3,9 @@ from Controller import Controller
 ctrl = Controller.getInstance()
 def night_before_travel():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-08 00:30:00')
+    ctrl.setPosition('卧室中')
+
     ctrl.addStoryText("2月7日夜，你兴奋得睡不着觉。打开手机发现已经是午夜12点半。你决定：")
     ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("发送旅游信息", lambda: (ctrl.clearPanel(), send_travel_info()))
@@ -27,8 +30,10 @@ def browse_bilibili():
 
 def morning_of_departure():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("2月8日早晨，你们早已在火车站坐了两小时——妈妈总是这样，怕我们赶不上车，打好提前量。")
-    ctrl.addStoryText("只是这提前量打的有点太好，就连火车检票口的屏幕还暗淡着，工作人员也没有来。")
+    ctrl.setTime('2024-02-08 07:15:00')
+    ctrl.setPosition('火车站')
+    ctrl.addStoryText("2月8日早晨，你们早已在火车站坐了半个多小时——妈妈总是这样，怕我们赶不上车，打好提前量。")
+    ctrl.addStoryText("只是这提前量打的有点太好，就连火车检票口的屏幕还暗淡着，工作人员也没有来，但是已有很多人在等待。他们有的是赶春节回家的车，剩下的，就是像你们一样准备“游历春节”的了")
     ctrl.addStoryText("你开始在沈阳北站的候车厅漫无目的地游逛起来。")
     ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("看看店铺", lambda: (ctrl.clearPanel(), look_at_shops()))
@@ -51,6 +56,8 @@ def browse_phone():
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), on_the_train()))
 
 def on_the_train():
+    ctrl.setTime('2024-02-08 07:35:00')
+    ctrl.setPosition('火车站')
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("时间过得总是又快又慢——快就快在期待的心情上，慢就慢在焦急的等待上。")
     ctrl.addStoryText("你一手一个，两个行李箱就这么被轻松地提了起来，你意识到，自己已经长大了，身体很棒。")
@@ -97,8 +104,9 @@ def train_journey_continued():
 
 def immerse_in_memories():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("硬座终于是太久，太累了。你开始四处活动，在拍了几张窗外风景之后，便没了兴趣。")
-    ctrl.addStoryText("开始找吃的找喝的；爸爸妈妈没意思就玩儿手机，不怎么和你聊天，或许这就是代沟？")
+    ctrl.setTime('2024-02-08 10:35:00')
+    ctrl.setPosition('火车站')
+    
     ctrl.addStoryText("你从对面的青年那里了解到，他来自山东聊城，你听说了辽工大在那边的录取状况和他们的高考分数后，吃惊地张大了嘴。")
     ctrl.addStoryText("火车上油油腻腻的15元盒饭吊不起你的胃口，你一遍又一遍看着12306上面的报站和时间点。")
     ctrl.addStoryText("信号时有时无，让你不能和他人保持联系、刷视频也很难。")
@@ -111,6 +119,9 @@ def immerse_in_memories():
 
 def leaving_train_station():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-08 16:55:00')
+    ctrl.setPosition('火车站出站口')
+    
     ctrl.addStoryText("你与父母总算是离开了熙熙攘攘的火车站。")
     ctrl.addStoryText("虽然刚刚下午四点多，但是哈尔滨的隆冬已经为城市熄了灯，")
     ctrl.addStoryText("而无数的高楼大厦却如同宿舍宵禁后精力旺盛的莘莘学子，仍是不知疲倦地挑灯夜战。")
@@ -136,18 +147,24 @@ def walk():
 def choose_activity():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     # 假设之前没有进行发送旅游信息的操作
+    
+    ctrl.setTime('2024-02-08 17:55:00')
+    ctrl.setPosition('酒店')
     ctrl.addStoryText("你们决定：")
     ctrl.addButton("出去转转", lambda: (ctrl.clearPanel(), explore()))
     ctrl.addButton("酒店休息", lambda: (ctrl.clearPanel(), rest_in_hotel()))
 
 def explore():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setPosition('夜市')
     ctrl.addStoryText("你和爸爸妈妈来到了熙熙攘攘热热闹闹的夜市。")
     ctrl.addStoryText("你随便挑了一会，转头已经找不到爸爸妈妈了——看来你们只能靠手机联系了。你又横穿了几条街。")
     ctrl.addButton("偶然的发现", lambda: (ctrl.clearPanel(), unexpected_discovery()))
 
 def rest_in_hotel():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-08 20:55:00')
+    
     ctrl.addStoryText("选择在酒店休息，你们决定早点休息，为明天的探索储备精力。")
     ctrl.addButton("开启第二天的旅程", lambda: (ctrl.clearPanel(),  explore_together()))
    
@@ -157,6 +174,8 @@ def rest_in_hotel():
 
 def unexpected_discovery():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+  
+    ctrl.setPosition('街巷')
     ctrl.addStoryText("一个偶然，你看见一件你再熟悉不过的羽绒服——克莱因蓝色，鼓鼓囊囊简直像一个柔软的气球……你的心跳停了一下，听觉随之消失，动作也完全静止。真的是ta！")
     ctrl.addStoryText("你在夜市中偶然发现了一个熟悉的身影。")
     ctrl.addStoryText('#0000FF选择：#0000FF')
@@ -194,6 +213,8 @@ def rest_in_hotel_with_fireworks():
 # 定义第二天早上的场景
 def morning():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-09 06:55:00')
+    ctrl.setPosition('酒店')
     ctrl.addStoryText("第二天早上。爸爸妈妈早早地将你喊起来，想拉着你一起按照他们结合很多旅游攻略的宇宙超级无敌天至尊自行总结攻略一起行动。")
     ctrl.addStoryText("但他们也知道你生性叛逆，说不定不愿意和他们一起逛。于是，他们采纳了你的意见：")
     ctrl.addStoryText('#0000FF选择：#0000FF')
@@ -218,6 +239,8 @@ def early_morning():
 
 def goto_church():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-09 07:55:00')
+    ctrl.setPosition('索菲亚教堂前的广场')
     ctrl.addStoryText("你到了索菲亚教堂前的广场，那里已经有几对情侣在拍照留念。你在人群中寻找她的身影。")
     ctrl.addStoryText("不一会儿，你看到了她，穿着红色的羽绒服，在雪地上特别显眼。你走上前，带着早晨的问候和一颗跳动的心。")
     ctrl.addButton("与她会面", lambda: (ctrl.clearPanel(), meet_her()))
@@ -231,12 +254,14 @@ def meet_her():
 
 def walk_together():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setPosition('中央大街')
     ctrl.addStoryText("你们沿着中央大街漫步，古老的建筑像是在诉说着往日的故事。你们在一家俄式餐厅享用了早餐，她对每一道菜都充满了好奇。")
     ctrl.addStoryText("在你们的谈笑中，你发现了生活中的另一种乐趣。")
     ctrl.addButton("继续探索", lambda: (ctrl.clearPanel(), continue_exploration()))
 
 def visit_ice_sculptures():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+   
     ctrl.addStoryText("在户外的冰雕展览中，你们被那些精致的冰雕艺术品深深吸引。她在每一个冰雕前都会驻足欣赏，你则在一旁静静地欣赏着她专注的样子。")
     ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("一起滑雪", lambda: (ctrl.clearPanel(), go_skiing()))
@@ -248,12 +273,15 @@ def continue_exploration():
     ctrl.addButton("滑雪结束", lambda: (ctrl.clearPanel(), after_skiing()))
 
 def go_skiing():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setCurrentProgress(sys._getframe().f_code.co_name) 
+    ctrl.setPosition('小型滑雪场')
+    ctrl.setTime('2024-02-09 15:40:00')
     ctrl.addStoryText("在小型滑雪场上，你们尽情地享受着滑雪的乐趣。每一次摔倒，你们都会相视而笑，然后再次站起来。")
     ctrl.addButton("休息一下", lambda: (ctrl.clearPanel(), take_a_break()))
 
 def watch_sunset():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setPosition('咖啡馆')
     ctrl.addStoryText("你们找到了一个可以俯瞰整个城市的高地，一起静静地看着夕阳，感受着那份宁静和美好。")
     ctrl.addButton("夜幕下的咖啡馆", lambda: (ctrl.clearPanel(), coffee_under_stars()))
 
@@ -269,6 +297,8 @@ def coffee_under_stars():
 
 def after_skiing():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setPosition('小型滑雪场')
+    ctrl.setTime('2024-02-09 19:40:00')
     ctrl.addStoryText("滑雪后，你们在附近的咖啡馆里坐下，让温暖的气氛和热腾腾的饮料解冻你们的身体。")
     ctrl.addButton("深夜的表白", lambda: (ctrl.clearPanel(), night_confession()))
 
@@ -279,7 +309,7 @@ def listen_to_heart():
 
 def night_confession():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("夜深了，你知道是时候了。你看着她，深吸一口气，然后说出了藏在心底的话：“在这个如梦如幻的地方，我找到了我生命中最真实的感觉。那就是我喜欢你。”")
+    ctrl.addStoryText("你看着她，深吸一口气，然后说出了藏在心底的话：“在这个如梦如幻的地方，我找到了我生命中最真实的感觉。那就是，我爱你。”")
     ctrl.addStoryText("她的眼中闪过泪光，她紧紧握住了你的手。")
     ctrl.addButton("珍藏这一刻", lambda: (ctrl.clearPanel(), cherish_moment()))
 
@@ -308,6 +338,8 @@ def end_day():
 
 def explore_together():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setPosition('哈尔滨工业大学')
+    ctrl.setTime('2024-02-09 9:40:00')
     ctrl.addStoryText("多么难得的一次家庭聚会！你知道，自己上大学以后，与父母在一起的时间变得越来越少。")
     ctrl.addStoryText("你选择牺牲自己的小小野心，和他们一同行动。爸爸妈妈自然是喜出望外。")
     ctrl.addStoryText("妈妈还亲自为你拉上了羽绒服的拉链。不知不觉你已经高出妈妈一头，你小时候她拉着你散步的身影渐渐模糊。")
@@ -325,12 +357,8 @@ def visit_hit():
     ctrl.addStoryText("你想起去年参观的中国第一所现代大学——天津大学校内无处不在的“1895”，以及隔壁南开大学三步一见的标语“我是爱南开的”……")
     ctrl.addStoryText("果然每一所大学都有属于自己的、无处不在的校园文化。")
     ctrl.addStoryText("你和父母走进哈工大校门，他们提议，让你这个大学生带领他们，看看大学校园内有什么值得参观的地方。")
-    ctrl.addButton("开始校园之旅", lambda: (ctrl.clearPanel(), visit_library()))
+    ctrl.addButton("开始校园之旅", lambda: (ctrl.clearPanel(), visit_souvenir_shop()))
 
-def choose_next_destination():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("从图书馆出来，你们的下一站是纪念品商店")
-    visit_souvenir_shop()
 
 def visit_souvenir_shop():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
@@ -340,30 +368,28 @@ def visit_souvenir_shop():
     ctrl.addStoryText("你很是开心，爸爸妈妈也没有责备你乱花钱。显然他们经常看网上的高等学府视频，哈工大几乎可以称得上他们心中的圣地。")
     ctrl.addButton("结束校园之旅", lambda: (ctrl.clearPanel(), end_campus_tour())) 
 
-def visit_library():
-    ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你选择先去看看C9名校的图书馆与你自己学校的图书馆有什么不同。")
-    ctrl.addStoryText("一进入图书馆，你便和父母分头行动，他们被图书馆的宽敞明亮所吸引，而你则被人、书和知识的熏陶所吸引。")
-    ctrl.addStoryText("真没想到，即使是年前放假的时候，仍然有无数学子坐在自习桌旁笔耕不辍。")
-    ctrl.addStoryText("你继续走着，突然，你看到几个学生正在整理一堆丢在地上的破书。")
-    ctrl.addStoryText("你问了问，居然是文学社正在搞“图书漂流”活动，可以免费选择一本地上的书带走。你欣喜若狂。")
-  
-    choose_next_destination()
+
 
 # 之前的校园之旅最后一部分应该连接到这个选择
 def end_campus_tour():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-09 15:40:00')
+    ctrl.setPosition('附近的校园餐厅')
     ctrl.addStoryText("经过一天的校园之旅，你们决定去附近的餐厅享用晚餐。")
     ctrl.addStoryText("这是一次愉快的家庭旅行的开始。")
     choose_next__destination()
 
 def choose_next__destination():
-     ctrl.addStoryText("一夜无话。第三天，也是你们此次哈尔滨之旅的最后一天，你们准备前往哈尔滨冰雪大世界")
-     ctrl.addButton("到达冰雪大世界", lambda: (ctrl.clearPanel(), go_to_harbin())) 
+    ctrl.setTime('2024-02-10 07:40:00')
+    ctrl.setPosition('酒店')
+    ctrl.addStoryText("一夜无话。第三天，也是你们此次哈尔滨之旅的最后一天，你们准备前往哈尔滨冰雪大世界")
+    ctrl.addButton("到达冰雪大世界", lambda: (ctrl.clearPanel(), go_to_harbin())) 
 
      
 def go_to_harbin():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-10 07:45:00')
+    ctrl.setPosition('冰雪大世界')
     ctrl.addStoryText("随着你们踏入了冰雪大世界，一片由冰晶构成的城堡映入眼帘，在阳光下闪耀着耀眼的光芒。")
     ctrl.addStoryText("你的父母也被这壮观的景象所吸引，你们决定先去探索这个冰雕城堡。")
     ctrl.addStoryText('#0000FF选择：#0000FF')
@@ -383,6 +409,7 @@ def continue_with_guide():
 
 def explore_castle():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-10 07:59:00')
     ctrl.addStoryText("你决定离开团队，自己探索城堡的秘密。")
     ctrl.addStoryText("你走过一条条蜿蜒曲折的冰廊，每个转角都有新的惊喜。")
     ctrl.addStoryText("在一个隐蔽的角落里，你发现了一座小型冰雕，它是一只栩栩如生的冰狼，那精湛的工艺让你不禁佩服起雕刻者的技艺。")
@@ -395,6 +422,7 @@ def continue_exploring_castle():
 
 def explore_castle_outdoors():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-10 08:30:00')
     ctrl.addStoryText("探索完城堡，你们来到了户外的冰滑梯区。这里有各种高低不同的滑梯，孩子们在这里尖叫着，欢笑着。")
     ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("勇敢尝试最高的滑梯", lambda: (ctrl.clearPanel(), try_highest_slide()))
@@ -412,6 +440,7 @@ def try_medium_slide():
 
 def visit_ice_dance_performance():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-10 10:40:00')
     ctrl.addStoryText("在体验了冰川裂缝后，你们来到了一个宽敞的空地，这里正在举行一场冰上舞蹈表演。舞者们穿着华丽的服装，在冰面上旋转跳跃，他们的表演优雅而充满力量，让你们都为之动容。")
     ctrl.addStoryText('#0000FF选择：#0000FF')
     ctrl.addButton("观看舞蹈表演", lambda: (ctrl.clearPanel(), watch_dance_performance()))
@@ -446,6 +475,8 @@ def take_creative_photos():
 
 def end_of_ice_snow_journey():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
+    ctrl.setTime('2024-02-10 11:37:00')
+    ctrl.setPosition('返程')
     ctrl.addStoryText("当你们最终离开冰雪大世界，踏上回家的路时，你们的心中充满了满足和快乐。这次旅行不仅让你们领略了冰雪的魅力，更加深了家人之间的情感。这段旅程，这些记忆，将会成为你们生命中宝贵的财富。")
     ctrl.changeScript('scene','farewell2')
  
