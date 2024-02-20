@@ -147,7 +147,9 @@ class UIUtils(QMainWindow):
 
     def newGame(self):
         self.dataManager.reCreateDB()
-        self.continueGame()
+        self.stacked_widget.setCurrentIndex(1)
+        self.loadStatus()
+        self.runScript(self.dataManager.getScript(),self.dataManager.getFunction())
     
     def continueGame(self):
         self.stacked_widget.setCurrentIndex(1)

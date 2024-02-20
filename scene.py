@@ -719,4 +719,4 @@ def end_message_partd():
     ctrl.addStoryText("温馨地，你的旅行游戏团队")
     ctrl.addAboutUsButton()
 
-#以下未
+
