@@ -113,7 +113,7 @@ def immerse_in_memories():
     ctrl.addStoryText("火车上油油腻腻的15元盒饭吊不起你的胃口，你一遍又一遍看着12306上面的报站和时间点。")
     ctrl.addStoryText("信号时有时无，让你不能和他人保持联系、刷视频也很难。")
     ctrl.addStoryText("在你说出第114514遍“我受不了啦”之后，火车报站声音终于响起：等噔灯灯！")
-    ctrl.addStoryText("各位旅客请注意，本次列车即将到达终点站;哈尔滨站。请各位旅客整理好随身物品和行李，准备下车。祝您旅途愉快！")
+    ctrl.addStoryText("各位旅客请注意，本次列车即将到达终点站;哈尔滨西站。请各位旅客整理好随身物品和行李，准备下车。祝您旅途愉快！")
     ctrl.addStoryText("多么亲切的东北话！！")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), leaving_train_station()))
     
@@ -129,7 +129,7 @@ def leaving_train_station():
     ctrl.addStoryText("而无数的高楼大厦却如同宿舍宵禁后精力旺盛的莘莘学子，仍是不知疲倦地挑灯夜战。")
     ctrl.addStoryText("外面不少出租车。只见几个如饥似渴的大叔立刻冲上来，问你们：上哪！上冰雪大世界不？")
     ctrl.addStoryText("要不是远处高楼林立、灯火辉煌，你还真以为自己到家了。")
-    ctrl.addStoryText("你们决定：")
+    ctrl.addStoryText("#0000FF你们决定：#0000FF")
     ctrl.addButton("坐出租车", lambda: (ctrl.clearPanel(), take_taxi()))
     ctrl.addButton("步行", lambda: (ctrl.clearPanel(), walk()))
 
@@ -137,6 +137,8 @@ def leaving_train_station():
 def take_taxi():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("司机大叔轻松地将你们的行李安置在了出租车后备箱里。他很是热情，一路和你们讲哈尔滨的特色和风土人情。")
+    
+    ctrl.setPosition('酒店')
     ctrl.addStoryText("很快就到了你们预定好的酒店。你们放好箱子，刚刚下午五点十分。")
     ctrl.addButton("选择活动", lambda: (ctrl.clearPanel(), choose_activity()))
 

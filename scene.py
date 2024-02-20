@@ -49,7 +49,7 @@ def ask_parents():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("你的爸爸向你挥了挥他的手机，“最近哈尔滨的冰雪大世界又一次走红，我想着我们能不能假期也去那儿玩一玩呢？”")
     ctrl.addStoryText("“好啊，那去哪儿玩呢？”")
-    ctrl.addStoryText("你的爸爸说，“最近哈尔滨的冰雪大世界又一次走红了，今年的各种活动筹备比往年做得更好，我们可以去那儿玩一玩。”")
+    ctrl.addStoryText("你的爸爸说:“最近哈尔滨的冰雪大世界又一次走红了，今年的各种活动筹备比往年做得更好，我们可以去那儿玩一玩。”")
     ctrl.addStoryText("你的妈妈说：“要是嫌太冷的话，咱们也可以去趟海南，我看今年海南的文旅宣传的也很好。”")
     plan_vacation()
 
@@ -221,7 +221,7 @@ def flight_landing():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.setTime('2024-02-08 11:30:00')
     ctrl.setPosition('美兰机场')
-    ctrl.addStoryText("经过几个小时的飞行，飞机平稳地降落在了海南美兰机场。你们收拾好自己的行李，跟随其他乘客离开了飞机。")
+    ctrl.addStoryText("经过几个小时的飞行，飞机平稳地降落在了海口美兰机场。你们收拾好自己的行李，跟随其他乘客离开了飞机。")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), arrival_in_hainan()))
 
 def arrival_in_hainan():
