@@ -152,6 +152,9 @@ def rest_in_hotel():
     ctrl.addButton("开启第二天的旅程", lambda: (ctrl.clearPanel(),  explore_together()))
    
 
+
+
+
 def unexpected_discovery():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("一个偶然，你看见一件你再熟悉不过的羽绒服——克莱因蓝色，鼓鼓囊囊简直像一个柔软的气球……你的心跳停了一下，听觉随之消失，动作也完全静止。真的是ta！")
