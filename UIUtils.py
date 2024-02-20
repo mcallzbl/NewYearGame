@@ -581,7 +581,6 @@ class UIUtils(QMainWindow):
     #展示窗口
     def showOn(self):
         self.show()
-        
         sys.exit(self.app.exec())
 
     #暂停等待输入
