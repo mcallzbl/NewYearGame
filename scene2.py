@@ -89,6 +89,7 @@ def reminiscing_childhood():
     ctrl.addStoryText("突然窗外一黑你们进入了隧道。")
     ctrl.addStoryText("随即便是一片光明、豁然开朗，一眼望不到边的银色平原。")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(), train_journey_continued()))
+    
 def train_journey_continued():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("如此开阔的视野打断了你的思维，所有车内的吵闹早已被你忽视。")
