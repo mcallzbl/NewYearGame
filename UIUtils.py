@@ -273,7 +273,7 @@ class UIUtils(QMainWindow):
         font = QFont(fontFamilies[0],15)
         self.money_label.setFont(font)
         self.money_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
-        self.status_layout.addWidget(self.money_label)
+        #self.status_layout.addWidget(self.money_label)
         self.money_label.setPalette(palette)
 
         self.location_label = QLabel()

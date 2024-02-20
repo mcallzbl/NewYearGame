@@ -80,7 +80,7 @@ class DataUtils:
             c = self.conn.cursor()
             c.execute(create_table_sql)
             c.execute(create_table_sql2)
-            self.update_or_insert_game_data('2024-01-15 08:00','家',145.14,'scene','run','bgm')
+            self.update_or_insert_game_data('2024-01-15 08:00','卧室中',145.14,'scene','run','bgm')
         except Error as e:
             print(e)
 

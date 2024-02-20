@@ -130,7 +130,7 @@ class Controller:
        # self.addButton('关于我们',)
         while not self.messageQueue.empty():
             self.messageQueue.get()
-        self.uiManager.add_task(lambda:self.dataManager.reCreateDB())
+        #self.uiManager.add_task(lambda:self.dataManager.reCreateDB())
         self.uiManager.add_task(lambda:self.uiManager.addButton('关于我们',lambda:(self.uiManager.about_us(),self.uiManager.clearStory(),self.clearPanel()),immediate=True))
         
         
