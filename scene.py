@@ -1,4 +1,5 @@
 import sys
+import openai
 from Controller import Controller
 from datetime import datetime
 ctrl = Controller.getInstance()
@@ -34,21 +35,20 @@ def get_up_at_once():
     ctrl.addStoryText("你掀开被子坐了起来，等自己清醒了几分后起身下床，穿好衣服后走出了你的卧室。")
     ctrl.setPosition('客厅')
     ctrl.addStoryText("今天是周末，你的爸爸妈妈都在家休息。你的爸爸妈妈现在正坐在客厅的沙发上，你的妈妈在看一本都市小说，而你的爸爸则在刷着手机，浏览着某些网页。")
-    ctrl.addButton("前去洗漱", lambda: (ctrl.clearPanel(),ctrl.setPosition('洗手间'),ctrl.addTime(days=0,hours=0,minutes=5), next_scene()))
+    ctrl.addButton("前去洗漱", lambda: (ctrl.clearPanel(), next_scene(),ctrl.setPosition('洗手间'),ctrl.addTime(days=0,hours=0,minutes=5)))
 
 def next_scene():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("洗漱完毕后，你进入了客厅，坐在了餐桌旁，准备找一些吃的。")
-    ctrl.setPosition('客厅')
     ctrl.addStoryText("你找到了几块面包，又拿了一瓶酸奶，坐在餐桌旁开始吃。")
-    ctrl.addStoryText("你发现你的爸爸妈妈好像在谋划着什么事情，于是你好奇地问道：“爸妈，你们在干嘛？”")
+    ctrl.addStoryText("你发现你的爸爸妈妈好像在谋划着什么事情，于是你好奇地问道，“爸妈，你们在干嘛？”")
     ctrl.addButton("询问爸妈", lambda: (ctrl.clearPanel(), ask_parents()))
 
 def ask_parents():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你的爸爸向你挥了挥他的手机：“最近哈尔滨的冰雪大世界又一次走红，我想着我们能不能假期也去那儿玩一玩呢？”")
+    ctrl.addStoryText("你的爸爸向你挥了挥他的手机，“最近哈尔滨的冰雪大世界又一次走红，我想着我们能不能假期也去那儿玩一玩呢？”")
     ctrl.addStoryText("“好啊，那去哪儿玩呢？”")
-    ctrl.addStoryText("你的爸爸说：“最近哈尔滨的冰雪大世界又一次走红了，今年的各种活动筹备比往年做得更好，我们可以去那儿玩一玩。”")
+    ctrl.addStoryText("你的爸爸说，“最近哈尔滨的冰雪大世界又一次走红了，今年的各种活动筹备比往年做得更好，我们可以去那儿玩一玩。”")
     ctrl.addStoryText("你的妈妈说：“要是嫌太冷的话，咱们也可以去趟海南，我看今年海南的文旅宣传的也很好。”")
     plan_vacation()
 
@@ -85,6 +85,7 @@ def choose_transportationforhaerbin():
     ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flightforhaerbin()))
     ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_trainforhaerbin()))
     ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train1()))
+
 
 def choose_high_speed_trainforhaerbin():
     ctrl.addStoryText("你说：“好的，咱们坐高铁吧，高铁快还舒适，我们还能欣赏一下沿途的风光。")
@@ -132,7 +133,7 @@ def success_in_get_ticket():
 
 def success_in_get_ticketforhaerbin():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
-    ctrl.addStoryText("你的爸爸打开了高铁12306，并开始查询相应的高铁班次。过了一会儿他高兴地拍了拍手说：“好了，我已经成功地抢到了三张票，时间是2月8号早上7点40从沈阳北站出发，直达哈尔滨西站！”你妈妈说：“好啊，我已经迫不及待了。”")
+    ctrl.addStoryText("你的爸爸打开了高铁12306，并开始查询相应的高铁班次。过了一会儿他高兴地拍了拍手说：“好了，我已经成功地抢到了三张票，时间是2月8号早上7点40从新民北站出发，直达哈尔滨西站！”你妈妈说：“好啊，我已经迫不及待了。”")
     ctrl.addButton("继续", lambda: (ctrl.clearPanel(),night_before_departureforhaerbin() ))
 
 
