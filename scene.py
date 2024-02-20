@@ -116,7 +116,7 @@ def choose_flightforhaerbin():  # 乘坐飞机去哈尔滨
 def self_driving():  # 自驾
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("妈妈对爸爸说：“咱家的车最近修好了吧？不如直接开过去，还能欣赏沿途美景……”妈妈还没说完，爸爸一脸苦笑地向大家展示了交管12123：他的驾驶证已经扣掉了11分，罚款也没有缴纳。妈妈叹了口气：“算了吧，还是选别的出行方式吧……”")
-    ctrl.addButton("#0000FF选择：#0000FF")
+    ctrl.addStoryText("#0000FF选择：#0000FF")
     ctrl.addButton("坐高铁", lambda: (ctrl.clearPanel(), choose_high_speed_trainforhainan()))
     ctrl.addButton("坐绿皮火车", lambda: (ctrl.clearPanel(), slow_train2()))
     ctrl.addButton("坐飞机", lambda: (ctrl.clearPanel(), choose_flightforhainan()))
@@ -168,7 +168,7 @@ def early_morning():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("2月8日清晨5点，天空还未完全亮起。家中的闹钟准时响起，打破了宁静的清晨。你们迅速起床，进行最后的准备。穿上简单舒适的衣服，双肩背上行李，你们三人便出发了。")
     ctrl.addStoryText("外面的空气带着清冷，但家中温暖的记忆和即将开始的旅行让你感到兴奋。爸爸开车，妈妈在副驾驶座上检查着物品，而你，坐在后座上，通过窗户看着城市逐渐苏醒。")
-    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), arrival_at_train_station()))  # 这里似乎是一个错误，应该是机场而不是火车站，如果是机场，请将函数名改为 arrival_at_airport()
+    ctrl.addButton("继续", lambda: (ctrl.clearPanel(), arrival_at_airport()))  # 这里似乎是一个错误，应该是机场而不是火车站，如果是机场，请将函数名改为 arrival_at_airport()
 
 
 
@@ -682,7 +682,7 @@ def end_message_part4():
 def end_message_part5():
     ctrl.setCurrentProgress(sys._getframe().f_code.co_name)
     ctrl.addStoryText("温馨地，你的旅行游戏团队")
-
+    ctrl.addAboutUsButton()
 
 
 #以下未
