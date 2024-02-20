@@ -10,7 +10,7 @@ a = Analysis(
     ['main.py'],
     pathex=[current_dir],
     binaries=[],
-    datas=[('Resource/', 'Resource/'),('scene.py','.')],
+    datas=[('Resource/', 'Resource/'),('scene.py','.'),('scene2.py','.')],
     hiddenimports=['Controller'],
     hookspath=[],
     hooksconfig={},
