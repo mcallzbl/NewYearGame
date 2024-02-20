@@ -1,5 +1,4 @@
 import sys
-import openai
 from Controller import Controller
 from datetime import datetime
 ctrl = Controller.getInstance()

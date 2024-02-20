@@ -65,7 +65,7 @@ class UIUtils(QMainWindow):
         textLayout = QVBoxLayout(Overlay)
         fontID = QFontDatabase.addApplicationFont(os.path.join(self.dataManager.getResourcePath(),'Resource/font2'))
         fontFamilies = QFontDatabase.applicationFontFamilies(fontID)
-        self.aboutlabel = QLabel('''开发团队:\n“你说的队”\n\n成员列表:\n计算机类II2303 单新意\n计算机类II2310 李佳成\n\n分工:\n剧情及脚本 单新意\nUI设计 李佳成\n\n感谢您的游玩''')
+        self.aboutlabel = QLabel('''开发团队:\n“你说的队”\n\n成员列表:\n计算机类II2303 单新意\n计算机类II2310 李佳成\n\n分工:\n剧情及脚本 单新意\nUI设计 李佳成\n\n自强不息,知行合一\n\n感谢您的游玩''')
         self.aboutlabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.aboutlabel.setStyleSheet("color: black; background-color: transparent;")
         self.aboutlabel.setFont(QFont(fontFamilies[0],23))
